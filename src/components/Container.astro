@@ -1,0 +1,15 @@
+---
+// The one boxed layout used by every section: content up to 1520px (the `--container-site` token in global.css),
+// centred, with gutters of 20px on phones, 32px on tablets and 48px on desktop (`--gutter`).
+// Section backgrounds, colour bands and photos may run full width; text, buttons, cards and the hero composition go inside this.
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'div'> {
+  /** Render another element, e.g. "header" or "footer". Defaults to "div". */
+  as?: 'div' | 'section' | 'header' | 'footer' | 'nav' | 'ul';
+}
+const { as: Tag = 'div', class: className, ...rest } = Astro.props;
+---
+<Tag class:list={['site-container', className]} {...rest}>
+  <slot />
+</Tag>

@@ -1,0 +1,227 @@
+---
+import { Picture, getImage } from 'astro:assets';
+import Icon from './Icon.astro';
+import { studioPhotos } from '../data/studio-photos';
+
+interface Props {
+  /** "grid": the full gallery page. "strip": the compact row on the home page. */
+  variant?: 'grid' | 'strip';
+}
+const { variant = 'grid' } = Astro.props;
+
+// Large version for the lightbox (never upscaled beyond the source).
+const items = await Promise.all(
+  studioPhotos.map(async (p) => ({
+    ...p,
+    full: await getImage({ src: p.src, format: 'webp', width: Math.min(p.src.width, 1400) }),
+  })),
+);
+---
+<div class={`gallery gallery--${variant}`} data-lightbox>
+  <ul>
+    {items.map((p, i) => (
+      <li class="reveal">
+        <a href={p.full.src} data-lightbox-item data-alt={p.alt} data-w={p.full.attributes.width} data-h={p.full.attributes.height}>
+          <Picture
+            src={p.src}
+            formats={['avif', 'webp']}
+            widths={[320, 480, 720]}
+            sizes={variant === 'grid' ? '(min-width: 64rem) 28vw, 46vw' : '(min-width: 64rem) 22vw, 46vw'}
+            alt={p.alt}
+            loading="lazy"
+            decoding="async"
+          />
+          <span class="zoom" aria-hidden="true"><Icon name="arrow" /></span>
+          <span class="sr-only"> (ingrandisci)</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+
+  <dialog class="lb on-dark" aria-label="Foto dello studio ingrandita">
+    <button type="button" class="lb__close" data-lb-close aria-label="Chiudi"><Icon name="close" /></button>
+    <button type="button" class="lb__nav lb__nav--prev" data-lb-prev aria-label="Foto precedente"><Icon name="arrow" class="flip" /></button>
+    <figure class="lb__figure">
+      <img class="lb__img" alt="" width="960" height="960" src="data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA=" />
+      <figcaption class="lb__cap"></figcaption>
+    </figure>
+    <button type="button" class="lb__nav lb__nav--next" data-lb-next aria-label="Foto successiva"><Icon name="arrow" /></button>
+  </dialog>
+</div>
+
+<style>
+  .gallery ul {
+    display: grid;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .gallery a {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+    background: var(--color-teal-50);
+  }
+  .gallery :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s var(--ease-out-quart);
+  }
+  .gallery a:hover :global(img) {
+    transform: scale(1.05);
+  }
+  .zoom {
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: var(--color-teal-600);
+    color: var(--color-white);
+    opacity: 0;
+    transform: translateY(6px);
+    transition:
+      opacity 0.25s,
+      transform 0.3s var(--ease-out-quart);
+  }
+  .zoom :global(svg) {
+    width: 1.125rem;
+    height: 1.125rem;
+    transform: rotate(-45deg);
+  }
+  .gallery a:hover .zoom,
+  .gallery a:focus-visible .zoom {
+    opacity: 1;
+    transform: none;
+  }
+  @media (min-width: 48rem) {
+    .gallery--grid ul {
+      gap: 1.25rem;
+      max-width: 66rem;
+      margin-inline: auto;
+    }
+    /* Slight stagger on the second column, so the grid does not read as a flat contact sheet. */
+    .gallery--grid li:nth-child(even) {
+      margin-top: 2.5rem;
+    }
+    .gallery--strip ul {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  /* Lightbox (native <dialog>: focus trap, Esc to close and inert background come for free) */
+  .lb {
+    width: 100vw;
+    max-width: none;
+    height: 100vh;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: rgb(20 40 38 / 0.96);
+    color: var(--color-white);
+  }
+  .lb[open] {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    animation: lb-in 0.3s var(--ease-out-quart);
+  }
+  .lb::backdrop {
+    background: rgb(20 40 38 / 0.8);
+  }
+  @keyframes lb-in {
+    from {
+      opacity: 0;
+      transform: scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .lb__figure {
+    display: grid;
+    justify-items: center;
+    gap: 0.75rem;
+    margin: 0;
+    min-width: 0;
+    touch-action: pan-y;
+  }
+  .lb__img {
+    width: auto;
+    max-width: 100%;
+    height: auto;
+    max-height: calc(100dvh - 8rem);
+    object-fit: contain;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+  .lb__cap {
+    max-width: 40rem;
+    text-align: center;
+    font-size: 0.9375rem;
+    color: var(--color-graphite-300);
+  }
+  .lb button {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border: 1px solid var(--color-teal-600);
+    border-radius: 50%;
+    background: rgb(20 40 38 / 0.6);
+    color: var(--color-white);
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  .lb button:hover {
+    background: var(--color-teal-800);
+  }
+  .lb button svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  .lb__close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 2;
+  }
+  @media (max-width: 47.99rem) {
+    .lb[open] {
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr auto;
+      align-content: center;
+    }
+    .lb__nav {
+      position: absolute;
+      bottom: 1rem;
+    }
+    .lb__nav--prev {
+      left: 1rem;
+    }
+    .lb__nav--next {
+      right: 1rem;
+    }
+    .lb__figure {
+      grid-row: 1;
+    }
+    .lb__img {
+      max-height: calc(100dvh - 10rem);
+    }
+  }
+</style>
+
+<script>
+  import '../scripts/lightbox.ts';
+</script>

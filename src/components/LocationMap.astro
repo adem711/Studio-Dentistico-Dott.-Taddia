@@ -1,0 +1,221 @@
+---
+import { Picture } from 'astro:assets';
+import studio from '../data/studio.json';
+import mapImage from '../assets/map.jpg';
+import Icon from './Icon.astro';
+
+const a = studio.address;
+const addressLine = `${a.street}, ${a.postalCode} ${a.city} (${a.province})`;
+// The official Google listing name (confirmed by the clinic) makes Google select the studio's own listing.
+const query = `${studio.googleListingName}, ${a.street}, ${a.postalCode} ${a.city}`;
+const embedSrc = `https://www.google.com/maps?q=${encodeURIComponent(query)}&z=17&hl=it&output=embed`;
+const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(query)}`;
+const mapTitle = `Mappa: ${studio.name}, ${addressLine}`;
+
+// Set "mapRequiresConsent": true in src/data/studio.json to put the "Carica la mappa" step back
+// (the Google Map then loads only after the visitor presses the button).
+const gated = Boolean((studio as { mapRequiresConsent?: boolean }).mapRequiresConsent);
+---
+{/* DEMO: button labels drafted; client to approve. Lives inside <ContactSection />, in the space under the contact details and beside the form. By default the Google Map is in the page and loads when it nears the screen (loading="lazy"), so Google is contacted without a consent step: see TODO-client.md #36 and the "mapRequiresConsent" switch in studio.json. */}
+<div class="where" id="dove-siamo" role="group" aria-label="Mappa e indicazioni">
+  {gated ? (
+    <div class="where__map" data-map data-src={embedSrc} data-title={mapTitle}>
+      <Picture
+        src={mapImage}
+        formats={['avif', 'webp']}
+        widths={[480, 768, 1024]}
+        sizes="(min-width: 64rem) 46vw, 92vw"
+        alt=""
+        loading="lazy"
+        decoding="async"
+      />
+      <div class="where__consent">
+        <h3 class="h4">Mappa interattiva</h3>
+        <p>
+          La mostriamo con Google Maps. Quando la carichi, Google può raccogliere dati sulla tua visita e usare cookie.
+          Finché non lo chiedi tu, non carichiamo nulla.
+        </p>
+        <button class="btn" type="button" data-map-load hidden>Carica la mappa</button>
+        <p class="where__links">
+          <a href={studio.mapsUrl} target="_blank" rel="noopener">Apri la mappa su Google Maps</a>
+          <span aria-hidden="true">·</span>
+          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Informativa di Google</a>
+        </p>
+      </div>
+    </div>
+  ) : (
+    <div class="where__map">
+      <iframe
+        title={mapTitle}
+        src={embedSrc}
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        allowfullscreen
+      ></iframe>
+    </div>
+  )}
+
+  <div class="where__actions">
+    <a class="btn" href={directionsUrl} target="_blank" rel="noopener">
+      <Icon name="arrow" class="nudge" /> Indicazioni stradali
+      <span class="sr-only">(si apre Google Maps in una nuova scheda)</span>
+    </a>
+    <a class="btn btn--ghost" href={studio.mapsUrl} target="_blank" rel="noopener">
+      <Icon name="pin" /> Apri in Google Maps
+      <span class="sr-only">(si apre in una nuova scheda)</span>
+    </a>
+    <button class="where__copy" type="button" data-copy={addressLine} hidden>
+      <span data-copy-label>Copia l'indirizzo</span>
+      <span class="sr-only" role="status" aria-live="polite" data-copy-status></span>
+    </button>
+  </div>
+
+  {gated && (
+    <p class="where__credit small">Anteprima della mappa © collaboratori di <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a>.</p>
+  )}
+</div>
+
+<style>
+  /* On desktop the wrapper fills the grid cell under the contact details, so the map stretches down to end level with the form. */
+  .where {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    height: 100%;
+  }
+
+  .where__map {
+    position: relative;
+    flex: 1 1 auto;
+    overflow: hidden;
+    aspect-ratio: 1 / 1;
+    border: 1px solid var(--color-graphite-100);
+    border-radius: 16px;
+    background: var(--color-teal-50);
+  }
+  .where__map iframe {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    animation: map-in 0.6s var(--ease-out-quart);
+  }
+  @keyframes map-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @media (min-width: 40rem) {
+    .where__map {
+      aspect-ratio: 16 / 9;
+    }
+  }
+  @media (min-width: 64rem) {
+    .where__map {
+      aspect-ratio: auto;
+      min-height: 18rem;
+    }
+  }
+
+  .where__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+  }
+  .where__actions .btn {
+    min-height: 2.75rem;
+    padding: 0 1.125rem;
+  }
+  .where__copy {
+    min-height: 2.75rem;
+    padding: 0 0.25rem;
+    border: 0;
+    background: transparent;
+    color: var(--color-teal-700);
+    font: 500 0.9375rem/1 var(--font-sans);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+  }
+  .where__copy:hover {
+    color: var(--color-teal-800);
+  }
+  .where__copy:not([hidden]) {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* --- Only used when "mapRequiresConsent" is on: the preview image and consent card --- */
+  .where__map :global(picture),
+  .where__map :global(img) {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .where__map :global(img) {
+    filter: saturate(0.85) brightness(1.02);
+  }
+  .where__map[data-map]::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgb(255 255 255 / 0.55);
+    pointer-events: none;
+  }
+  .where__map.is-loaded::after {
+    display: none;
+  }
+  .where__consent {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    z-index: 1;
+    display: grid;
+    justify-items: start;
+    gap: 0.75rem;
+    width: min(24rem, calc(100% - 1.5rem));
+    padding: 1.25rem;
+    background: var(--color-white);
+    box-shadow: 0 24px 60px -24px rgb(20 40 38 / 0.5);
+    transform: translate(-50%, -50%);
+  }
+  .where__consent p {
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  .where__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.625rem;
+    font-size: 0.8125rem;
+  }
+  .where__map.is-loaded .where__consent {
+    display: none;
+  }
+  .where__map :global(.where__iframe) {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: var(--color-teal-50);
+    animation: map-in 0.5s var(--ease-out-quart);
+  }
+  .where__credit {
+    text-align: right;
+  }
+</style>
+
+<script>
+  import '../scripts/location-map.ts';
+</script>

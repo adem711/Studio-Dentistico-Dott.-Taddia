@@ -1,0 +1,71 @@
+---
+import studio from '../data/studio.json';
+import Icon from './Icon.astro';
+import Container from './Container.astro';
+
+interface Props {
+  title?: string;
+  text?: string;
+}
+const {
+  title = 'Hai una domanda o vuoi fissare una visita?',
+  text = 'Chiamaci o scrivici: ti rispondiamo e fissiamo insieme il momento più comodo.',
+} = Astro.props;
+---
+{/* DEMO: default CTA copy drafted; client to approve. */}
+<section class="cta on-dark" aria-labelledby="cta-title">
+  <Container class="cta__inner">
+    <div class="cta__text">
+      <h2 id="cta-title" class="h2">{title}</h2>
+      <p>{text}</p>
+    </div>
+    <div class="cta__actions">
+      <a class="btn" href={studio.phoneHref}><Icon name="phone" class="ring" /> Chiama ora</a>
+      <a class="btn btn--ghost" href="/contatti/#appuntamento">Richiedi un appuntamento <Icon name="arrow" class="nudge" /></a>
+    </div>
+  </Container>
+</section>
+
+<style>
+  .cta {
+    background: var(--color-teal-800);
+    color: var(--color-teal-50);
+    padding-block: clamp(2.5rem, 6vw, 4.5rem);
+  }
+  .cta__inner {
+    display: grid;
+    gap: 1.75rem;
+    align-items: center;
+  }
+  .cta h2 {
+    color: var(--color-white);
+  }
+  .cta__text {
+    display: grid;
+    gap: 0.75rem;
+    max-width: 38rem;
+  }
+  .cta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .cta .btn:not(.btn--ghost) {
+    --btn-bg: var(--color-white);
+    --btn-fg: var(--color-teal-800);
+    --btn-border: var(--color-white);
+  }
+  .cta .btn:not(.btn--ghost):hover {
+    --btn-bg: var(--color-teal-50);
+    --btn-border: var(--color-teal-50);
+  }
+  .cta .btn--ghost {
+    --btn-border: var(--color-teal-300);
+  }
+  @media (min-width: 64rem) {
+    .cta__inner {
+      grid-template-columns: 1fr auto;
+      gap: 3rem;
+    }
+  }
+</style>

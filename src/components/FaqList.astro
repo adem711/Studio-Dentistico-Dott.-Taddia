@@ -1,0 +1,82 @@
+---
+interface Props {
+  items: { q: string; a: string }[];
+}
+const { items } = Astro.props;
+---
+<div class="faq">
+  {items.map((item) => (
+    <details>
+      <summary>
+        <span>{item.q}</span>
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false">
+          <path d="M12 5v14M5 12h14"></path>
+        </svg>
+      </summary>
+      <p>{item.a}</p>
+    </details>
+  ))}
+</div>
+
+<style>
+  .faq {
+    border-top: 1px solid var(--color-graphite-100);
+  }
+  details {
+    border-bottom: 1px solid var(--color-graphite-100);
+  }
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    min-height: 3.5rem;
+    padding: 1rem 0;
+    color: var(--color-graphite-800);
+    font-size: 1.125rem;
+    font-weight: 500;
+    line-height: 1.35;
+    cursor: pointer;
+    list-style: none;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary:hover {
+    color: var(--color-teal-700);
+  }
+  summary svg {
+    flex: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    color: var(--color-teal-600);
+    transition: transform 0.3s var(--ease-out-quart);
+  }
+  details[open] summary svg {
+    transform: rotate(45deg);
+  }
+  details p {
+    max-width: 44rem;
+    padding-bottom: 1.5rem;
+  }
+
+  /* Animated open/close where supported; elsewhere it simply opens. Runs on a click, never during load. */
+  @supports (interpolate-size: allow-keywords) {
+    .faq {
+      interpolate-size: allow-keywords;
+    }
+    details::details-content {
+      block-size: 0;
+      overflow: clip;
+      opacity: 0;
+      transition:
+        block-size 0.35s var(--ease-out-quart),
+        opacity 0.3s ease,
+        content-visibility 0.35s allow-discrete;
+    }
+    details[open]::details-content {
+      block-size: auto;
+      opacity: 1;
+    }
+  }
+</style>

@@ -1,0 +1,303 @@
+---
+import studio from '../data/studio.json';
+import Icon from './Icon.astro';
+---
+{/* DEMO: field help texts and status messages drafted in Italian; client to approve. Delivery address to be set in Netlify (TODO-client.md #6, #23). */}
+<div class="cf" data-contact-form-root>
+  <!--
+    Netlify Forms picks this form up at build time (data-netlify). WebMCP: toolname/tooldescription expose it to AI agents
+    as the "richiedi_appuntamento" tool. There is deliberately no toolautosubmit: a person always presses "Invia".
+  -->
+  <form
+    class="cf__form"
+    id="appuntamento-form"
+    name="appuntamento"
+    method="POST"
+    action="/contatti/"
+    data-netlify="true"
+    netlify-honeypot="bot-field"
+    novalidate
+    toolname="richiedi_appuntamento"
+    tooldescription="Invia allo Studio Dentistico Taddia di Novara una richiesta di appuntamento o di informazioni. Lo studio richiama al numero indicato."
+  >
+    <input type="hidden" name="form-name" value="appuntamento" />
+
+    <p class="cf__trap" aria-hidden="true">
+      <label>Non compilare questo campo se sei una persona <input name="bot-field" tabindex="-1" autocomplete="off" toolparamdescription="Campo anti-spam per i sistemi automatici: lasciare sempre vuoto" /></label>
+    </p>
+
+    <div class="cf__row">
+      <div class="cf__field">
+        <label for="cf-nome">Nome e cognome</label>
+        <input
+          id="cf-nome"
+          name="nome"
+          type="text"
+          autocomplete="name"
+          required
+          aria-describedby="cf-nome-err"
+          toolparamdescription="Nome e cognome della persona che richiede l'appuntamento"
+        />
+        <p class="cf__err" id="cf-nome-err" hidden></p>
+      </div>
+      <div class="cf__field">
+        <label for="cf-telefono">Telefono</label>
+        <input
+          id="cf-telefono"
+          name="telefono"
+          type="tel"
+          inputmode="tel"
+          autocomplete="tel"
+          required
+          aria-describedby="cf-telefono-err"
+          toolparamdescription="Numero di telefono al quale lo studio può richiamare, con prefisso se estero"
+        />
+        <p class="cf__err" id="cf-telefono-err" hidden></p>
+      </div>
+    </div>
+
+    <div class="cf__field">
+      <label for="cf-email">Email <span class="cf__opt">(facoltativa)</span></label>
+      <input
+        id="cf-email"
+        name="email"
+        type="email"
+        autocomplete="email"
+        aria-describedby="cf-email-err"
+        toolparamdescription="Indirizzo email della persona, facoltativo"
+      />
+      <p class="cf__err" id="cf-email-err" hidden></p>
+    </div>
+
+    <div class="cf__field">
+      <label for="cf-messaggio">Messaggio <span class="cf__opt">(facoltativo)</span></label>
+      <textarea
+        id="cf-messaggio"
+        name="messaggio"
+        rows="4"
+        aria-describedby="cf-messaggio-help"
+        toolparamdescription="Motivo della richiesta o giorni e orari preferiti. Non inserire dati sulla salute."
+      ></textarea>
+      <p class="cf__help" id="cf-messaggio-help">
+        Indica il motivo della richiesta o i giorni che preferisci. Non scrivere qui dati sulla tua salute: ne parleremo in visita.
+      </p>
+    </div>
+
+    <div class="cf__field cf__field--check">
+      <input
+        id="cf-privacy"
+        name="privacy"
+        type="checkbox"
+        value="accettata"
+        required
+        aria-describedby="cf-privacy-err"
+        toolparamdescription="Conferma di aver letto l'informativa sulla privacy: deve essere true per inviare"
+      />
+      <label for="cf-privacy">
+        Ho letto l'<a href={studio.privacyUrl} rel="noopener">informativa sulla privacy</a> e acconsento al trattamento dei miei dati per essere ricontattato.
+      </label>
+      <p class="cf__err" id="cf-privacy-err" hidden></p>
+    </div>
+
+    <div class="cf__actions">
+      <button class="btn" type="submit">
+        <span class="cf__label">Invia la richiesta</span>
+        <Icon name="arrow" class="nudge" />
+      </button>
+      <p class="small">
+        Preferisci parlarne a voce? <a href={studio.phoneHref}>Chiama il {studio.phone}</a>.
+      </p>
+    </div>
+
+    <p class="cf__error" role="alert" hidden>
+      Non siamo riusciti a inviare la richiesta. Riprova tra poco oppure chiamaci al{' '}
+      <a href={studio.phoneHref}>{studio.phone}</a>.
+    </p>
+  </form>
+
+  <div class="cf__success" role="status" tabindex="-1" hidden>
+    <svg class="cf__check" viewBox="0 0 48 48" width="56" height="56" aria-hidden="true" focusable="false">
+      <circle cx="24" cy="24" r="22" fill="var(--color-teal-600)"></circle>
+      <path d="M14 25l7 7 13-15" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>
+    <h3 class="h3">Richiesta inviata</h3>
+    <p>Grazie! Ti richiamiamo al più presto al numero che hai indicato. Per un'urgenza puoi chiamarci subito al <a href={studio.phoneHref}>{studio.phone}</a>.</p>
+  </div>
+</div>
+
+<style>
+  .cf {
+    display: grid;
+  }
+  .cf__form {
+    display: grid;
+    gap: 1.25rem;
+  }
+  .cf__row {
+    display: grid;
+    gap: 1.25rem;
+  }
+  .cf__field {
+    display: grid;
+    gap: 0.4rem;
+    align-content: start;
+  }
+  .cf__field label {
+    color: var(--color-graphite-800);
+    font-size: 0.9375rem;
+    font-weight: 500;
+  }
+  .cf__opt {
+    color: var(--color-graphite-500);
+    font-weight: 400;
+  }
+  .cf__field input:not([type='checkbox']),
+  .cf__field textarea {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.75rem 0.875rem;
+    border: 1px solid var(--color-graphite-500);
+    border-radius: 4px;
+    background: var(--color-white);
+    color: var(--color-graphite-800);
+    font: inherit;
+    transition:
+      border-color 0.2s,
+      box-shadow 0.2s;
+  }
+  .cf__field textarea {
+    resize: vertical;
+    min-height: 7rem;
+  }
+  .cf__field input:not([type='checkbox']):hover,
+  .cf__field textarea:hover {
+    border-color: var(--color-graphite-800);
+  }
+  .cf__field input:focus-visible,
+  .cf__field textarea:focus-visible {
+    outline: none;
+    border-color: var(--color-teal-700);
+    box-shadow: 0 0 0 3px var(--color-teal-200);
+  }
+  .cf__field[data-invalid='true'] input:not([type='checkbox']),
+  .cf__field[data-invalid='true'] textarea {
+    border-color: var(--color-error);
+    box-shadow: 0 0 0 1px var(--color-error);
+  }
+  .cf__field[data-valid='true'] input:not([type='checkbox']) {
+    border-color: var(--color-success);
+  }
+  .cf__help {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--color-graphite-600);
+  }
+  .cf__err {
+    color: var(--color-error);
+    font-size: 0.875rem;
+    font-weight: 500;
+    animation: nudge-in 0.35s var(--ease-out-quart);
+  }
+  .cf__err[hidden],
+  .cf__error[hidden],
+  .cf__success[hidden],
+  .cf__form[hidden] {
+    display: none;
+  }
+  @keyframes nudge-in {
+    from {
+      opacity: 0;
+      transform: translateX(-6px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .cf__field--check {
+    grid-template-columns: auto 1fr;
+    gap: 0.25rem 0.75rem;
+    align-items: start;
+  }
+  .cf__field--check input {
+    width: 1.375rem;
+    height: 1.375rem;
+    margin: 0.15rem 0 0;
+    accent-color: var(--color-teal-600);
+  }
+  .cf__field--check label {
+    font-weight: 400;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--color-graphite-600);
+  }
+  .cf__field--check .cf__err {
+    grid-column: 2;
+  }
+  .cf__actions {
+    display: grid;
+    gap: 0.875rem;
+    justify-items: start;
+  }
+  .cf__actions .btn[disabled] {
+    opacity: 0.75;
+    cursor: progress;
+    transform: none;
+  }
+  .cf__error {
+    padding: 0.875rem 1rem;
+    background: var(--color-error-bg);
+    border-left: 4px solid var(--color-error);
+    color: var(--color-graphite-800);
+  }
+  /* Honeypot: off-screen, never display:none (bots skip those). */
+  .cf__trap {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .cf__success {
+    display: grid;
+    gap: 0.75rem;
+    justify-items: start;
+    padding: 1.75rem;
+    background: var(--color-success-bg);
+    border-left: 4px solid var(--color-success);
+    outline: none;
+  }
+  .cf__check {
+    animation: pop 0.5s var(--ease-out-quart);
+  }
+  @keyframes pop {
+    0% {
+      transform: scale(0.4);
+      opacity: 0;
+    }
+    70% {
+      transform: scale(1.08);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  /* Highlight while an AI agent is filling the form (WebMCP). */
+  .cf__form:tool-form-active {
+    outline: 2px dashed var(--color-teal-600);
+    outline-offset: 8px;
+  }
+
+  @media (min-width: 40rem) {
+    .cf__row {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>
+
+<script>
+  import '../scripts/contact-form.ts';
+</script>

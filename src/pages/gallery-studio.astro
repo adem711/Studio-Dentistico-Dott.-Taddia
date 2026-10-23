@@ -1,0 +1,41 @@
+---
+import Base from '../layouts/Base.astro';
+import Gallery from '../components/Gallery.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Container from '../components/Container.astro';
+---
+{/* DEMO: intro drafted; photos are the clinic's own, higher-resolution originals requested (TODO-client.md #17). */}
+<Base
+  title="Lo studio: gli ambienti | Studio Dentistico Dott. Taddia, Novara"
+  description="Le sale operative, la sala d'attesa e la strumentazione digitale dello studio dentistico di Corso XXIII Marzo 189, a Novara."
+  path="/gallery-studio/"
+>
+  <section class="page-head">
+    <Container>
+      <div class="page-head__inner">
+        <p class="eyebrow">Lo studio</p>
+        <h1 class="h1">Gli ambienti dello studio, <em>prima di entrare</em>.</h1>
+        <p class="lead">
+          Le sale operative, la sala d'attesa e la strumentazione digitale di Corso XXIII Marzo 189. Clicca su una foto per ingrandirla.
+        </p>
+      </div>
+    </Container>
+  </section>
+
+  <section class="grid" aria-label="Fotografie dello studio">
+    <Container>
+      <Gallery variant="grid" />
+    </Container>
+  </section>
+
+  <CtaBand
+    title="Vieni a conoscere lo studio"
+    text="Chiamaci per fissare una visita: ti accogliamo e ti mostriamo gli ambienti."
+  />
+</Base>
+
+<style>
+  .grid {
+    padding-bottom: clamp(3.5rem, 8vw, 6rem);
+  }
+</style>

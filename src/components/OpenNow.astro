@@ -1,0 +1,48 @@
+---
+import studio from '../data/studio.json';
+---
+<!-- The text below is the no-JS state; src/scripts/ui.ts replaces it with the live Aperto/Chiuso status. -->
+<p class="open-now" data-open-now data-hours={JSON.stringify(studio.hours)} data-state="unknown">
+  <span class="open-now__dot" aria-hidden="true"></span>
+  <span data-open-label>{studio.hoursLabel}</span>
+</p>
+
+<style>
+  .open-now {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    color: var(--color-graphite-600);
+    font-size: 0.9375rem;
+    font-weight: 500;
+  }
+  .open-now__dot {
+    position: relative;
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 50%;
+    background: var(--color-graphite-400);
+    flex: none;
+  }
+  [data-state='open'] .open-now__dot {
+    background: var(--color-success);
+  }
+  [data-state='open'] .open-now__dot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--color-success);
+    animation: pulse 2.4s var(--ease-out-quart) infinite;
+  }
+  @keyframes pulse {
+    from {
+      transform: scale(1);
+      opacity: 0.55;
+    }
+    to {
+      transform: scale(3);
+      opacity: 0;
+    }
+  }
+</style>

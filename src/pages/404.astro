@@ -1,0 +1,49 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import studio from '../data/studio.json';
+import { whatsappHref } from '../lib/contact';
+import Container from '../components/Container.astro';
+---
+{/* DEMO: 404 copy drafted; client to approve. */}
+<Base
+  title="Pagina non trovata | Studio Dentistico Dott. Taddia"
+  description="La pagina che cerchi non esiste più o è stata spostata. Torna alla home o chiama lo studio dentistico di Novara."
+  path="/404.html"
+  noindex
+>
+  <section class="nf">
+    <Container>
+      <div class="nf__inner">
+      <p class="eyebrow">Errore 404</p>
+      <h1 class="h1">Questa pagina non esiste più, <em>o è stata spostata</em>.</h1>
+      <p class="lead">Puoi tornare alla home, vedere i servizi dello studio oppure chiamarci: ti aiutiamo volentieri.</p>
+      <div class="nf__cta">
+        <a class="btn" href="/">Torna alla home</a>
+        <a class="btn btn--ghost" href="/servizi-dentali/">Vedi i servizi <Icon name="arrow" class="nudge" /></a>
+        <a class="btn btn--ghost" href={whatsappHref()} target="_blank" rel="noopener" aria-label={`Scrivici su WhatsApp al ${studio.phone}`}><Icon name="whatsapp" /> {studio.phone}</a>
+      </div>
+      </div>
+    </Container>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    padding-block: clamp(3rem, 9vw, 8rem);
+  }
+  .nf__inner {
+    display: grid;
+    gap: 1.5rem;
+    justify-items: center;
+    max-width: 46rem;
+    margin-inline: auto;
+    text-align: center;
+  }
+  .nf__cta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+</style>

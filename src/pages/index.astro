@@ -1,0 +1,79 @@
+---
+import { getImage } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import TrustStrip from '../components/TrustStrip.astro';
+import ServiceExplorer from '../components/ServiceExplorer.astro';
+import About from '../components/About.astro';
+import VideoPresentation from '../components/VideoPresentation.astro';
+import CasesTeaser from '../components/CasesTeaser.astro';
+import Reviews from '../components/Reviews.astro';
+import Gallery from '../components/Gallery.astro';
+import ContactSection from '../components/ContactSection.astro';
+import Icon from '../components/Icon.astro';
+import { dentistSchema } from '../lib/schema';
+import heroPhoto from '../assets/studio/studio-sala-luminosa.jpg';
+import Container from '../components/Container.astro';
+
+// Hero image: same widths/sizes as <Picture> in Hero.astro, so the preload below hits the same file.
+const heroWidths = [480, 720, 960];
+const heroSizes = '(min-width: 1024px) min(40rem, 42vw), 84vw';
+const heroAvif = await getImage({ src: heroPhoto, format: 'avif', widths: heroWidths });
+---
+{/* DEMO: title, meta description and the gallery heading are drafted in Italian; client to approve. */}
+<Base
+  title="Dentista a Novara | Studio Dentistico Dott. Taddia"
+  description="Studio dentistico a Novara, in Corso XXIII Marzo 189: igiene orale, conservativa, endodonzia, impianti, ortodonzia e diagnosi per adulti e bambini. Chiama il 329 414 8444."
+  path="/"
+  jsonLd={[dentistSchema()]}
+>
+  <link
+    slot="head"
+    rel="preload"
+    as="image"
+    type="image/avif"
+    imagesrcset={heroAvif.srcSet.attribute}
+    imagesizes={heroSizes}
+    fetchpriority="high"
+  />
+  <Hero image={heroPhoto} widths={heroWidths} sizes={heroSizes} />
+  <TrustStrip />
+  <ServiceExplorer />
+  <About />
+  <VideoPresentation />
+  <CasesTeaser />
+  <Reviews />
+
+  <section class="strip" aria-labelledby="strip-title">
+    <Container>
+      <header class="strip__head reveal">
+        <div>
+          <p class="eyebrow">Gli ambienti</p>
+          <h2 id="strip-title" class="h1">Lo studio, <em>prima di entrare</em>.</h2>
+        </div>
+        <a class="btn btn--ghost" href="/gallery-studio/">Tutte le foto <Icon name="arrow" class="nudge" /></a>
+      </header>
+      <Gallery variant="strip" />
+    </Container>
+  </section>
+
+  <ContactSection />
+</Base>
+
+<style>
+  .strip {
+    padding-block: clamp(3.5rem, 8vw, 7rem);
+  }
+  .strip__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1.25rem 2rem;
+    margin-bottom: clamp(1.75rem, 4vw, 3rem);
+  }
+  .strip__head > div {
+    display: grid;
+    gap: 0.75rem;
+  }
+</style>

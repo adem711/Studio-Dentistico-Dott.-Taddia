@@ -1,0 +1,288 @@
+---
+import { Picture } from 'astro:assets';
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import OpenNow from '../../components/OpenNow.astro';
+import FaqList from '../../components/FaqList.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import studio from '../../data/studio.json';
+import { getServices, servicePath } from '../../lib/services';
+import { SITE } from '../../lib/schema';
+import { whatsappHref } from '../../lib/contact';
+import Container from '../../components/Container.astro';
+
+export async function getStaticPaths() {
+  const services = await getServices();
+  return services.map((entry) => ({ params: { slug: entry.id }, props: { entry, services } }));
+}
+
+const { entry, services } = Astro.props;
+const { data } = entry;
+const { Content } = await render(entry);
+const others = services.filter((s) => s.id !== entry.id);
+const path = servicePath(entry.id);
+
+const breadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
+    { '@type': 'ListItem', position: 2, name: 'Servizi dentali', item: `${SITE}/servizi-dentali/` },
+    { '@type': 'ListItem', position: 3, name: data.title, item: `${SITE}${path}` },
+  ],
+};
+---
+<Base
+  title={data.metaTitle}
+  description={data.metaDescription}
+  path={path}
+  jsonLd={[breadcrumb]}
+>
+  <section class="svc-hero">
+    <Container>
+      <nav class="crumbs" aria-label="Percorso">
+        <ol>
+          <li><a href="/">Home</a></li>
+          <li><a href="/servizi-dentali/">Servizi dentali</a></li>
+          <li aria-current="page">{data.title}</li>
+        </ol>
+      </nav>
+
+      <div class="svc-hero__grid">
+        <div class="svc-hero__text">
+          {data.kidsTag && <p class="kids-tag">{data.kidsTag}</p>}
+          <p class="eyebrow">Servizi dentali</p>
+          <h1 class="h1">{data.h1}</h1>
+          <p class="lead">{data.summary}</p>
+          <div class="svc-hero__cta">
+            <a class="btn" href={studio.phoneHref}><Icon name="phone" class="ring" /> Chiama ora</a>
+            <a class="btn btn--ghost" href="/contatti/#appuntamento">Richiedi un appuntamento <Icon name="arrow" class="nudge" /></a>
+          </div>
+        </div>
+
+        <div class="svc-hero__media-wrap">
+          <div class="svc-hero__square" aria-hidden="true"></div>
+          <figure class={`svc-hero__media vt-${data.order}`}>
+            <Picture
+              src={data.image}
+              formats={['avif', 'webp']}
+              widths={[480, 720, 960]}
+              sizes="(min-width: 1024px) 34vw, 92vw"
+              alt={data.imageAlt}
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+            />
+          </figure>
+        </div>
+      </div>
+    </Container>
+  </section>
+
+  <section class="svc-body">
+    <Container class="svc-body__grid">
+      <article class="prose">
+        <Content />
+      </article>
+
+      <aside class="svc-aside" aria-label="Contatti">
+        <h2 class="h4">Vuoi parlarne con noi?</h2>
+        <p>Scrivici su WhatsApp o chiamaci, per informazioni o per fissare un appuntamento.</p>
+        <a class="btn" href={whatsappHref()} target="_blank" rel="noopener" aria-label={`Scrivici su WhatsApp al ${studio.phone}`}><Icon name="whatsapp" /> {studio.phone}</a>
+        <a class="svc-aside__link" href={studio.phoneHref}><Icon name="phone" /> Oppure chiama</a>
+        <OpenNow />
+        <p class="small">{studio.address.street}, {studio.address.postalCode} {studio.address.city}</p>
+        <a class="svc-aside__link" href="/contatti/">Tutti i contatti <Icon name="arrow" /></a>
+      </aside>
+    </Container>
+  </section>
+
+  {data.faq.length > 0 && (
+    <section class="svc-faq" aria-labelledby="faq-title">
+      <Container class="svc-faq__inner">
+        <h2 id="faq-title" class="h2 reveal">Domande frequenti</h2>
+        <div class="reveal"><FaqList items={data.faq} /></div>
+      </Container>
+    </section>
+  )}
+
+  <section class="svc-more" aria-labelledby="more-title">
+    <Container>
+      <h2 id="more-title" class="h4">Altri servizi</h2>
+      <ul>
+        {others.map((s) => (
+          <li><a href={servicePath(s.id)}>{s.data.title} <Icon name="arrow" /></a></li>
+        ))}
+        <li><a href="/servizi-dentali/casi-clinici/">Casi clinici <Icon name="arrow" /></a></li>
+      </ul>
+    </Container>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<style>
+  .svc-hero {
+    padding-block: 1rem clamp(2.5rem, 6vw, 5rem);
+    overflow-x: clip;
+  }
+  .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.5rem;
+    margin: 0 0 1.5rem;
+    padding: 0;
+    list-style: none;
+    font-size: 0.875rem;
+    color: var(--color-graphite-500);
+  }
+  .crumbs li:not(:last-child)::after {
+    content: '/';
+    margin-left: 0.5rem;
+    color: var(--color-graphite-300);
+  }
+  .crumbs a {
+    display: inline-block;
+    padding: 0.4rem 0;
+    color: var(--color-graphite-600);
+  }
+  .svc-hero__grid {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+  }
+  .svc-hero__text {
+    display: grid;
+    gap: 1.25rem;
+    justify-items: start;
+    max-width: 38rem;
+  }
+  .svc-hero__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .svc-hero__media-wrap {
+    position: relative;
+    order: -1;
+    max-width: 30rem;
+    width: 88%;
+    padding: 1rem 1rem 0 0;
+  }
+  .svc-hero__square {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 55%;
+    height: 55%;
+    background: var(--color-teal-500);
+  }
+  .svc-hero__media {
+    position: relative;
+    margin: 0;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: var(--color-teal-50);
+  }
+  .svc-hero__media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .svc-body {
+    padding-block: clamp(1rem, 4vw, 3rem) clamp(3rem, 7vw, 6rem);
+  }
+  .svc-body__grid {
+    display: grid;
+    gap: 2.5rem;
+  }
+  .svc-aside {
+    display: grid;
+    gap: 1rem;
+    justify-items: start;
+    align-self: start;
+    padding: 1.75rem;
+    background: var(--color-teal-50);
+    border-left: 4px solid var(--color-teal-500);
+  }
+  .svc-aside__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.75rem;
+    font-weight: 500;
+  }
+  .svc-aside__link :global(svg) {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .svc-faq {
+    padding-block: clamp(3rem, 7vw, 5.5rem);
+    background: var(--color-graphite-50);
+  }
+  .svc-faq__inner {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .svc-more {
+    padding-block: clamp(2.5rem, 6vw, 4rem);
+  }
+  .svc-more ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .svc-more a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0 1rem;
+    border: 1px solid var(--color-teal-200);
+    color: var(--color-teal-700);
+    font-weight: 500;
+    text-decoration: none;
+    transition:
+      background-color 0.2s,
+      border-color 0.2s;
+  }
+  .svc-more a:hover {
+    background: var(--color-teal-50);
+    border-color: var(--color-teal-500);
+  }
+  .svc-more a :global(svg) {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  @media (min-width: 64rem) {
+    .svc-hero__grid {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      gap: clamp(2rem, 5vw, 5rem);
+    }
+    .svc-hero__media-wrap {
+      order: 0;
+      width: 100%;
+      justify-self: end;
+    }
+    .svc-body__grid {
+      grid-template-columns: minmax(0, 1fr) 20rem;
+      gap: clamp(2rem, 6vw, 6rem);
+    }
+    .svc-aside {
+      position: sticky;
+      top: 6.5rem;
+    }
+    .svc-faq__inner {
+      grid-template-columns: 1fr 2fr;
+      gap: clamp(2rem, 6vw, 6rem);
+    }
+  }
+</style>

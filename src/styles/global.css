@@ -1,0 +1,543 @@
+@import "tailwindcss" source(none);
+/* Only scan templates and scripts for utility classes (not docs, comments or content). */
+@source "../components";
+@source "../layouts";
+@source "../pages";
+@source "../scripts";
+
+/*
+  Brand tokens — source: "Taddia Brand Guidelines v1.0" (Brand info/).
+  Scales 50–900 and the coral / sun / status colours are copied from the guidelines.
+  Colours added for accessibility (not in the guidelines) are marked "derived".
+*/
+@theme static {
+  --color-*: initial;
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  /* Taddia Teal */
+  --color-teal-50: #eef8f7; /* Teal mist */
+  --color-teal-100: #d5efec;
+  --color-teal-200: #a9ded8;
+  --color-teal-300: #6fc6bd;
+  --color-teal-400: #2faea2;
+  --color-teal-500: #009a8e; /* Taddia Teal — logo, accents; 3.49:1 on white = large text only */
+  --color-teal-600: #00837a; /* Teal profondo — buttons with white text (4.64:1) */
+  --color-teal-700: #006b64; /* teal text on white / mist (6.39:1) */
+  --color-teal-800: #05524d;
+  --color-teal-900: #0a3a37;
+
+  /* Grafite */
+  --color-graphite-0: #ffffff;
+  --color-graphite-50: #f4f6f5;
+  --color-graphite-100: #e8ecea;
+  --color-graphite-200: #d6dcda;
+  --color-graphite-300: #b7bfbd;
+  --color-graphite-400: #8e9795;
+  --color-graphite-500: #6b7270; /* lightest text allowed on white */
+  --color-graphite-600: #4c4c4c; /* body text */
+  --color-graphite-800: #262928;
+  --color-graphite-900: #1a1c1c;
+
+  /* Inchiostro notte — dark sections, footer */
+  --color-ink: #142826;
+
+  /* Accents — kids and reminders only, never large areas */
+  --color-coral-100: #fce9e3;
+  --color-coral-500: #e2765a;
+  --color-coral-700: #b4523a;
+  --color-coral-800: #a34a33; /* derived: text on Coral 100 needs 4.5:1; Coral 700 gives 4.25:1 */
+  --color-sun-100: #fbf1d6;
+  --color-sun-500: #e0a82e;
+  --color-sun-700: #9c7114;
+
+  /* Status */
+  --color-success: #2e8b4e;
+  --color-success-text: #256f3e; /* derived: success green fails 4.5:1 on white as small text */
+  --color-success-bg: #e1f3e6;
+  --color-warning: #9c7114;
+  --color-warning-bg: #fbf1d6;
+  --color-error: #c2392f;
+  --color-error-bg: #fbe4e2;
+  --color-info: #2d6fa8;
+  --color-info-bg: #e2eef8;
+
+  --font-sans: "Fira Sans", "Fira Sans Fallback", "Segoe UI", Tahoma, sans-serif;
+
+  /* Boxed layout: the CONTENT column never gets wider than this (1520px), whatever the screen.
+     The gutters below sit on top of it, so the box itself is 1520px + 2 gutters. */
+  --container-site: 95rem;
+
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/*
+  The boxed layout: one width token (--container-site) and one gutter variable (--gutter).
+  Named `site-container` on purpose: Tailwind's built-in `container` utility steps up to 1536px on wide screens
+  and merges with any custom rule of the same name. Use <Container> (src/components/Container.astro) for every
+  section's content; Tailwind users can also write `max-w-site` (the same token).
+*/
+@utility site-container {
+  width: 100%;
+  max-width: calc(var(--container-site) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* ---------- Fonts (self-hosted, latin subset, one family) ---------- */
+@font-face {
+  font-family: "Fira Sans";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("/fonts/fira-sans-latin-300-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Fira Sans";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/fira-sans-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Fira Sans";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("/fonts/fira-sans-latin-500-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Fira Sans";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("/fonts/fira-sans-latin-600-normal.woff2") format("woff2");
+}
+/* Metric-matched fallback so the swap does not move the layout (CLS 0). */
+@font-face {
+  font-family: "Fira Sans Fallback";
+  src: local("Arial");
+  size-adjust: 100%;
+  ascent-override: 93.5%;
+  descent-override: 26.5%;
+  line-gap-override: 0%;
+}
+
+/* ---------- Base ---------- */
+@layer base {
+  :root {
+    --gutter: 1.25rem; /* 20px on phones */
+  }
+  @media (min-width: 48rem) {
+    :root {
+      --gutter: 2rem; /* 32px on tablets */
+    }
+  }
+  @media (min-width: 64rem) {
+    :root {
+      --gutter: 3rem; /* 48px on desktop */
+    }
+  }
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    margin: 0;
+    background: var(--color-white);
+    color: var(--color-graphite-600);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  /* Tailwind's reset strips underlines; inline links must not rely on colour alone (WCAG 1.4.1). */
+  a {
+    color: var(--color-teal-700);
+    text-decoration: underline;
+    text-decoration-thickness: 0.07em;
+    text-underline-offset: 0.2em;
+  }
+  a:hover {
+    color: var(--color-teal-800);
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-teal-700);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+  .on-dark :focus-visible {
+    outline-color: var(--color-teal-300);
+  }
+  img,
+  svg,
+  video {
+    display: block;
+    max-width: 100%;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    margin: 0;
+    color: var(--color-graphite-800);
+    text-wrap: balance;
+  }
+  p {
+    margin: 0;
+    text-wrap: pretty;
+  }
+  ::selection {
+    background: var(--color-teal-200);
+    color: var(--color-graphite-900);
+  }
+}
+
+/* ---------- Type scale (guidelines: Display / H1–H4 / Lead / Small / Eyebrow) ---------- */
+@layer components {
+  .display {
+    font-size: clamp(2.5rem, 1.6rem + 3.6vw, 4rem);
+    line-height: 1.05;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+  }
+  .display em,
+  .h1 em,
+  .h2 em {
+    font-style: normal;
+    font-weight: 500;
+    color: var(--color-teal-500); /* large text only (>= 24px) */
+  }
+  .on-dark .display em,
+  .on-dark .h1 em,
+  .on-dark .h2 em {
+    color: var(--color-teal-400);
+  }
+  .h1 {
+    font-size: clamp(2.125rem, 1.5rem + 2.4vw, 3rem);
+    line-height: 1.1;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+  }
+  .h2 {
+    font-size: clamp(1.75rem, 1.35rem + 1.6vw, 2.25rem);
+    line-height: 1.15;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .h3 {
+    font-size: 1.75rem;
+    line-height: 1.2;
+    font-weight: 500;
+  }
+  .h4 {
+    font-size: 1.375rem;
+    line-height: 1.3;
+    font-weight: 500;
+  }
+  .lead {
+    font-size: 1.25rem;
+    line-height: 1.55;
+  }
+  .small {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--color-graphite-500);
+  }
+  .eyebrow {
+    font-size: 0.8125rem;
+    line-height: 1.3;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-teal-700);
+  }
+  .on-dark .eyebrow {
+    color: var(--color-teal-300);
+  }
+  .num {
+    font-weight: 600;
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+
+  /* ---------- Buttons ---------- */
+  .btn {
+    --btn-bg: var(--color-teal-600);
+    --btn-fg: var(--color-white);
+    --btn-border: var(--color-teal-600);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    min-height: 3rem;
+    padding: 0 1.375rem;
+    border: 1px solid var(--btn-border);
+    border-radius: 4px;
+    background: var(--btn-bg);
+    color: var(--btn-fg);
+    font: 500 0.9375rem/1 var(--font-sans);
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      transform 0.18s var(--ease-out-quart),
+      background-color 0.18s,
+      border-color 0.18s,
+      color 0.18s;
+  }
+  .btn:hover {
+    --btn-bg: var(--color-teal-700);
+    --btn-border: var(--color-teal-700);
+    color: var(--btn-fg);
+    transform: translateY(-2px);
+  }
+  .btn:active {
+    transform: translateY(0) scale(0.98);
+  }
+  .btn svg {
+    width: 1.125rem;
+    height: 1.125rem;
+    flex: none;
+    transition: transform 0.25s var(--ease-out-quart);
+  }
+  .btn:hover svg.nudge {
+    transform: translateX(3px);
+  }
+  .btn:hover svg.ring {
+    animation: ring 0.6s var(--ease-out-quart);
+  }
+  .btn--ghost {
+    --btn-bg: transparent;
+    --btn-fg: var(--color-teal-700);
+    --btn-border: var(--color-teal-300);
+  }
+  .btn--ghost:hover {
+    --btn-bg: var(--color-teal-50);
+    --btn-fg: var(--color-teal-800);
+    --btn-border: var(--color-teal-600);
+  }
+  .on-dark .btn--ghost {
+    --btn-fg: var(--color-white);
+    --btn-border: var(--color-teal-400);
+  }
+  .on-dark .btn--ghost:hover {
+    --btn-bg: rgb(255 255 255 / 0.08);
+    --btn-fg: var(--color-white);
+    --btn-border: var(--color-teal-300);
+  }
+
+  /* Intro block at the top of every inner page: centred, readable measure. */
+  .page-head {
+    padding-block: clamp(2rem, 5vw, 4rem) clamp(1.5rem, 4vw, 3rem);
+  }
+  .page-head--flush {
+    padding-bottom: 0;
+  }
+  .page-head__inner {
+    display: grid;
+    gap: 1.25rem;
+    justify-items: center;
+    max-width: 46rem;
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .kids-tag {
+    display: inline-block;
+    padding: 0.3rem 0.7rem;
+    background: var(--color-coral-100);
+    color: var(--color-coral-800);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .skip-link {
+    position: fixed;
+    left: 1rem;
+    top: 0.75rem;
+    z-index: 100;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    background: var(--color-ink);
+    color: var(--color-white);
+    font-weight: 500;
+    text-decoration: none;
+    transform: translateY(-200%);
+  }
+  .skip-link:focus {
+    transform: none;
+    color: var(--color-white);
+  }
+}
+
+@keyframes ring {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  20% {
+    transform: rotate(-14deg);
+  }
+  40% {
+    transform: rotate(12deg);
+  }
+  60% {
+    transform: rotate(-8deg);
+  }
+  80% {
+    transform: rotate(4deg);
+  }
+}
+
+/* ---------- Scroll reveal: CSS scroll-driven first, IntersectionObserver fallback ---------- */
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(1.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@supports (animation-timeline: view()) {
+  .reveal {
+    animation: reveal-up linear both;
+    animation-timeline: view();
+    animation-range: entry 5% entry 45%;
+  }
+}
+/* Only hide before reveal when scripting is on, so no-JS visitors always see the content. */
+@media (scripting: enabled) {
+  @supports not (animation-timeline: view()) {
+    .reveal {
+      opacity: 0;
+      transform: translateY(1.75rem);
+      transition:
+        opacity 0.7s var(--ease-out-quart),
+        transform 0.7s var(--ease-out-quart);
+    }
+    .reveal.is-visible {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/* ---------- Page transitions (cross-document, no JS) ---------- */
+@view-transition {
+  navigation: auto;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.28s;
+  animation-timing-function: var(--ease-out-quart);
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0s !important;
+    animation-timeline: none !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  @view-transition {
+    navigation: none;
+  }
+}
+
+/* ---------- Long-form content (service pages) ---------- */
+@layer components {
+  .prose {
+    max-width: 42rem;
+    font-size: 1.0625rem;
+    line-height: 1.7;
+  }
+  .prose > * + * {
+    margin-top: 1.25rem;
+  }
+  .prose h2 {
+    margin-top: 2.75rem;
+    font-size: 1.75rem;
+    line-height: 1.2;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .prose h2:first-child {
+    margin-top: 0;
+  }
+  .prose h2 + p {
+    margin-top: 0.875rem;
+  }
+  .prose strong {
+    color: var(--color-graphite-800);
+    font-weight: 500;
+  }
+  .prose ul {
+    padding-left: 1.25rem;
+    display: grid;
+    gap: 0.75rem;
+  }
+  .prose li::marker {
+    color: var(--color-teal-500);
+  }
+}
+
+/* ---------- Shared element transitions: service image on cards <-> service page ---------- */
+.vt-1 { view-transition-name: svc-1; }
+.vt-2 { view-transition-name: svc-2; }
+.vt-3 { view-transition-name: svc-3; }
+.vt-4 { view-transition-name: svc-4; }
+.vt-5 { view-transition-name: svc-5; }
+.vt-6 { view-transition-name: svc-6; }
+::view-transition-group(svc-1),
+::view-transition-group(svc-2),
+::view-transition-group(svc-3),
+::view-transition-group(svc-4),
+::view-transition-group(svc-5),
+::view-transition-group(svc-6) {
+  animation-duration: 0.5s;
+  animation-timing-function: var(--ease-out-quart);
+}
+/* The site chrome stays put while pages cross-fade. */
+::view-transition-group(site-header),
+::view-transition-group(mobile-bar) {
+  animation-duration: 0s;
+}
+
+/* Mirrors the arrow icon for "previous" buttons. */
+.flip {
+  transform: scaleX(-1);
+}

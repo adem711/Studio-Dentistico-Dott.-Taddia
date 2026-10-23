@@ -1,0 +1,26 @@
+# Netlify redirects. Canonical URLs keep the old /servizi-dentali/ structure so rankings carry over.
+# Old /servizi/... aliases -> canonical /servizi-dentali/...
+/servizi/sbiancamento-dentale-a-novara    /servizi-dentali/sbiancamento-dentale-a-novara/    301
+/servizi/sbiancamento-dentale-a-novara/   /servizi-dentali/sbiancamento-dentale-a-novara/    301
+/servizi/conservativa-odontoiatria-novara    /servizi-dentali/conservativa-odontoiatria-novara/    301
+/servizi/conservativa-odontoiatria-novara/   /servizi-dentali/conservativa-odontoiatria-novara/    301
+/servizi/endodonzia-novara    /servizi-dentali/endodonzia-novara/    301
+/servizi/endodonzia-novara/   /servizi-dentali/endodonzia-novara/    301
+/servizi/impianti-dentali-novara    /servizi-dentali/impianti-dentali-novara/    301
+/servizi/impianti-dentali-novara/   /servizi-dentali/impianti-dentali-novara/    301
+/servizi/ortodonzia-novara    /servizi-dentali/ortodonzia-novara/    301
+/servizi/ortodonzia-novara/   /servizi-dentali/ortodonzia-novara/    301
+/servizi/diagnosi-esami-radiografici-novara    /servizi-dentali/diagnosi-esami-radiografici-novara/    301
+/servizi/diagnosi-esami-radiografici-novara/   /servizi-dentali/diagnosi-esami-radiografici-novara/    301
+/servizi/casi-clinici    /servizi-dentali/casi-clinici/    301
+/servizi/casi-clinici/   /servizi-dentali/casi-clinici/    301
+/servizi    /servizi-dentali/    301
+/servizi/   /servizi-dentali/    301
+
+# Old thank-you page (the new form shows its success state inline)
+/thankyou    /contatti/    301
+/thankyou/   /contatti/    301
+
+# Old sitemap URLs
+/sitemap.xml        /sitemap-index.xml    301
+/page-sitemap.xml   /sitemap-index.xml    301

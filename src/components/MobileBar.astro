@@ -1,0 +1,32 @@
+---
+import studio from '../data/studio.json';
+import Icon from './Icon.astro';
+---
+<div class="mobile-bar" role="region" aria-label="Contatti rapidi">
+  <a class="btn" href={studio.phoneHref}><Icon name="phone" class="ring" /> Chiama</a>
+  <a class="btn btn--ghost" href="/contatti/#appuntamento"><Icon name="calendar" /> Prenota</a>
+</div>
+
+<style>
+  .mobile-bar {
+    display: none;
+  }
+  @media (max-width: 47.99rem) {
+    .mobile-bar {
+      position: fixed;
+      inset: auto 0 0 0;
+      z-index: 60;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.625rem;
+      padding: 0.625rem 0.75rem calc(0.625rem + env(safe-area-inset-bottom));
+      background: var(--color-white);
+      border-top: 1px solid var(--color-graphite-100);
+      box-shadow: 0 -8px 24px -14px rgb(20 40 38 / 0.3);
+      view-transition-name: mobile-bar;
+    }
+    .mobile-bar .btn {
+      min-height: 3rem;
+    }
+  }
+</style>

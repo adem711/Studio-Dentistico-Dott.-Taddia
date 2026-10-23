@@ -1,0 +1,134 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { getServices, servicePath } from '../../lib/services';
+import { SITE } from '../../lib/schema';
+import Container from '../../components/Container.astro';
+
+const services = await getServices();
+
+const breadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
+    { '@type': 'ListItem', position: 2, name: 'Servizi dentali', item: `${SITE}/servizi-dentali/` },
+  ],
+};
+---
+{/* DEMO: page intro drafted; client to approve. */}
+<Base
+  title="Servizi dentali a Novara | Studio Dentistico Dott. Taddia"
+  description="Igiene orale e sbiancamento, conservativa, endodonzia, impianti e protesi, ortodonzia e diagnosi: i servizi dello studio dentistico di Novara."
+  path="/servizi-dentali/"
+  jsonLd={[breadcrumb]}
+>
+  <section class="page-head">
+    <Container>
+      <div class="page-head__inner">
+      <p class="eyebrow">Servizi dentali</p>
+      <h1 class="h1">Le cure che offriamo, <em>spiegate con calma</em>.</h1>
+      <p class="lead">
+        Ogni percorso inizia con una visita: ascoltiamo, spieghiamo e solo dopo proponiamo un piano di cura. Qui trovi i servizi dello studio, per adulti e bambini.
+      </p>
+      </div>
+    </Container>
+  </section>
+
+  <section class="rows" aria-label="Elenco dei servizi">
+    <Container>
+      <ul>
+        {services.map((s, i) => (
+          <li class={`row reveal ${i % 2 ? 'row--flip' : ''}`}>
+            <a class={`row__media vt-${s.data.order}`} href={servicePath(s.id)} tabindex="-1" aria-hidden="true">
+              <Picture
+                src={s.data.image}
+                formats={['avif', 'webp']}
+                widths={[480, 720]}
+                sizes="(min-width: 1024px) 38vw, 92vw"
+                alt=""
+                loading={i < 1 ? 'eager' : 'lazy'}
+                fetchpriority={i < 1 ? 'high' : undefined}
+                decoding="async"
+              />
+            </a>
+            <div class="row__text">
+              {s.data.kidsTag && <p class="kids-tag">{s.data.kidsTag}</p>}
+              <h2 class="h2"><a href={servicePath(s.id)}>{s.data.title}</a></h2>
+              <p class="lead">{s.data.summary}</p>
+              <a class="btn btn--ghost" href={servicePath(s.id)}>
+                Scopri di più<span class="sr-only">: {s.data.title}</span> <Icon name="arrow" class="nudge" />
+              </a>
+            </div>
+          </li>
+        ))}
+      </ul>
+      <p class="more">
+        Vuoi vedere alcuni lavori eseguiti? <a href="/servizi-dentali/casi-clinici/">Guarda i casi clinici</a>.
+      </p>
+    </Container>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<style>
+  .rows ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .row {
+    display: grid;
+    gap: 1.5rem;
+    align-items: center;
+    padding-block: clamp(1.75rem, 4vw, 3.25rem);
+    border-top: 1px solid var(--color-graphite-100);
+  }
+  .row__media {
+    display: block;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--color-teal-50);
+  }
+  .row__media :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.7s var(--ease-out-quart);
+  }
+  .row:hover .row__media :global(img) {
+    transform: scale(1.04);
+  }
+  .row__text {
+    display: grid;
+    gap: 1rem;
+    justify-items: start;
+    max-width: 34rem;
+  }
+  .row__text h2 a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .row__text h2 a:hover {
+    color: var(--color-teal-700);
+  }
+  .more {
+    padding-block: 2rem 3.5rem;
+    border-top: 1px solid var(--color-graphite-100);
+  }
+  @media (min-width: 64rem) {
+    .row {
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+      gap: clamp(2rem, 6vw, 6rem);
+    }
+    .row--flip .row__media {
+      order: 2;
+    }
+    .row--flip .row__text {
+      justify-self: end;
+    }
+  }
+</style>

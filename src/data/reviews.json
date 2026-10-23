@@ -1,0 +1,35 @@
+{
+  "_note": "Real Google Maps reviews transcribed verbatim from the clinic's own screenshots (Brand info/Screenshots, captured 23/10/2026). Only reviews whose full text was visible and that make no claims about prices, superlatives or health outcomes are included; see TODO-client.md #14. 'when' is Google's relative date on the capture date and is kept for reference only: it is not shown. Add 'dateLabel' (e.g. 'settembre 2026') to an item to show a real date. 'rating', 'count' and 'ratingAsOf' come from the studio's official Google listing (\"Dentista a Novara - Studio Dentistico Dott. Taddia\"), read on 23/10/2026: 4,9 from 225 reviews. Refresh them from the live listing now and then, or set them to null to hide the figures.",
+  "source": "Google",
+  "capturedOn": "2026-10-23",
+  "rating": 4.9,
+  "count": 225,
+  "profileUrl": "https://www.google.com/maps/search/?api=1&query=Dentista%20a%20Novara%20-%20Studio%20Dentistico%20Dott.%20Taddia%2C%20Corso%20XXIII%20Marzo%20189%2C%2028100%20Novara",
+  "items": [
+    {
+      "name": "Manjot Kaur",
+      "rating": 5,
+      "when": "1 mese fa",
+      "text": "Mi sono trovata davvero molto bene."
+    },
+    {
+      "name": "Chia Rich",
+      "rating": 5,
+      "when": "4 mesi fa",
+      "text": "Dentista di fiducia. Pulizia, professionalità, cordialità."
+    },
+    {
+      "name": "Yunan Hu",
+      "rating": 5,
+      "when": "5 mesi fa",
+      "text": "Avevo una piccola emergenza con il dente del giudizio, mi hanno fissato un appuntamento dopo 2 giorni, il dottore e la sua assistente sono stati super veloci e professionali. Consiglio assolutamente!"
+    },
+    {
+      "name": "joker funny",
+      "rating": 5,
+      "when": "8 mesi fa",
+      "text": "Super cordiali e professionali, consiglierò a tutti i miei conoscenti di andarci in caso di necessità"
+    }
+  ],
+  "ratingAsOf": "2026-10-23"
+}

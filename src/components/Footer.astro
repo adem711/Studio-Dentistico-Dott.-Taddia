@@ -1,0 +1,208 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/brand/logo-horizontal-reverse.svg';
+import studio from '../data/studio.json';
+import Icon from './Icon.astro';
+import { hoursRows } from '../lib/hours';
+import { whatsappHref } from '../lib/contact';
+import Container from './Container.astro';
+
+const year = new Date().getFullYear();
+const services = [
+  { href: '/servizi-dentali/sbiancamento-dentale-a-novara/', label: 'Igiene orale e sbiancamento' },
+  { href: '/servizi-dentali/conservativa-odontoiatria-novara/', label: 'Conservativa' },
+  { href: '/servizi-dentali/endodonzia-novara/', label: 'Endodonzia' },
+  { href: '/servizi-dentali/impianti-dentali-novara/', label: 'Impianti e protesi' },
+  { href: '/servizi-dentali/ortodonzia-novara/', label: 'Ortodonzia' },
+  { href: '/servizi-dentali/diagnosi-esami-radiografici-novara/', label: 'Diagnosi ed esami radiografici' },
+];
+---
+{/* DEMO: footer description drafted. Legal line to be confirmed (TODO-client.md #2). */}
+<footer class="site-footer on-dark">
+  <Container class="site-footer__grid">
+    <div class="site-footer__brand">
+      <a href="/" aria-label="Studio Dentistico Taddia, pagina iniziale">
+        <Image src={logo} alt="" width={208} height={38} loading="lazy" decoding="async" />
+      </a>
+      <p>Odontoiatria per tutta la famiglia, a Novara. Ogni passaggio del tuo piano di cura viene spiegato prima di iniziare.</p>
+      <a class="site-footer__social" href={studio.facebook} rel="noopener" aria-label="Studio Dentistico Taddia su Facebook">
+        <Icon name="facebook" />
+        <span>Facebook</span>
+      </a>
+    </div>
+
+    <div>
+      <h2 class="site-footer__title">Contatti</h2>
+      <address>
+        <a href={whatsappHref()} class="site-footer__phone" target="_blank" rel="noopener" aria-label={`Scrivici su WhatsApp al ${studio.phone}`}>
+          <Icon name="whatsapp" /> {studio.phone}
+        </a>
+        <a href={studio.phoneHref}><Icon name="phone" /> <span>Oppure chiama</span></a>
+        <a href={studio.mapsUrl} rel="noopener">
+          <Icon name="pin" />
+          <span>{studio.address.street}<br />{studio.address.postalCode} {studio.address.city} ({studio.address.province})</span>
+        </a>
+      </address>
+      <a class="site-footer__cta" href="/contatti/#appuntamento">Richiedi un appuntamento <Icon name="arrow" /></a>
+    </div>
+
+    <div>
+      <h2 class="site-footer__title">Orari</h2>
+      <dl class="site-footer__hours">
+        {hoursRows().map((r) => <div><dt>{r.label}</dt><dd>{r.value}</dd></div>)}
+      </dl>
+    </div>
+
+    <div>
+      <h2 class="site-footer__title">Servizi</h2>
+      <ul>
+        {services.map((s) => <li><a href={s.href}>{s.label}</a></li>)}
+        <li><a href="/servizi-dentali/casi-clinici/">Casi clinici</a></li>
+      </ul>
+    </div>
+  </Container>
+
+  <Container class="site-footer__legal">
+    <p>
+      © {year} {studio.name} · {studio.address.street}, {studio.address.postalCode} {studio.address.city} ({studio.address.province}) · {studio.legalLine}
+    </p>
+    <p>
+      <a href={studio.privacyUrl} rel="noopener">Privacy policy</a>
+      <span aria-hidden="true">·</span>
+      <a href={studio.privacyFullUrl} rel="noopener">Informativa completa e cookie</a>
+    </p>
+  </Container>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--color-ink);
+    color: var(--color-graphite-300);
+    padding-block: clamp(3rem, 7vw, 5rem) 2rem;
+    font-size: 0.9375rem;
+  }
+  .site-footer a {
+    color: var(--color-white);
+    text-decoration-color: rgb(255 255 255 / 0.3);
+  }
+  .site-footer a:hover {
+    color: var(--color-teal-300);
+  }
+  .site-footer__grid {
+    display: grid;
+    gap: 2.5rem 3rem;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  }
+  .site-footer__brand img {
+    width: 13rem;
+    height: auto;
+  }
+  .site-footer__brand p {
+    margin-top: 1.25rem;
+    max-width: 22rem;
+  }
+  .site-footer__social {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+    min-height: 2.75rem;
+    text-decoration: none;
+  }
+  .site-footer svg {
+    width: 1.125rem;
+    height: 1.125rem;
+    flex: none;
+  }
+  .site-footer__title {
+    margin-bottom: 1rem;
+    color: var(--color-teal-300);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  address {
+    display: grid;
+    gap: 0.75rem;
+    font-style: normal;
+  }
+  address a {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+    min-height: 2.75rem;
+    text-decoration: none;
+  }
+  address a svg {
+    margin-top: 0.2em;
+  }
+  .site-footer__phone {
+    font-size: 1.25rem;
+    font-weight: 500;
+  }
+  .site-footer__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    min-height: 2.75rem;
+    font-weight: 500;
+    text-decoration: none;
+  }
+  .site-footer__hours {
+    margin: 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+  .site-footer__hours div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    max-width: 18rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-teal-900);
+  }
+  .site-footer__hours dd {
+    margin: 0;
+    color: var(--color-white);
+    font-variant-numeric: tabular-nums;
+  }
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.125rem;
+  }
+  ul a {
+    display: inline-block;
+    padding-block: 0.4rem;
+    text-decoration: none;
+  }
+  .site-footer__legal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.75rem 2rem;
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-teal-900);
+    font-size: 0.8125rem;
+  }
+  .site-footer__legal a {
+    display: inline-block;
+    padding: 0.5rem 0.25rem;
+  }
+  /* Keep the legal line clear of the floating WhatsApp button. */
+  @media (min-width: 48rem) {
+    .site-footer {
+      padding-bottom: 5.5rem;
+    }
+  }
+  @media (max-width: 47.99rem) {
+    .site-footer {
+      padding-bottom: 1rem;
+    }
+  }
+</style>

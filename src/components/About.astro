@@ -1,0 +1,94 @@
+---
+import { Picture } from 'astro:assets';
+import Icon from './Icon.astro';
+import photo from '../assets/studio/studio-sala-operativa.jpg';
+import Container from './Container.astro';
+---
+{/* DEMO: copy paraphrased from the old site's "La professionalità al tuo servizio" text. No doctor name or photo yet: client to provide (TODO-client.md #2, #18). */}
+<section class="about" aria-labelledby="about-title">
+  <Container class="about__grid">
+    <figure class="about__media reveal">
+      <Picture
+        src={photo}
+        formats={['avif', 'webp']}
+        widths={[480, 720, 960]}
+        sizes="(min-width: 64rem) 36vw, 92vw"
+        alt="La sala operativa dello studio: poltrona odontoiatrica, lampada e mobili bianchi."
+        loading="lazy"
+        decoding="async"
+      />
+    </figure>
+
+    <div class="about__text">
+      <p class="eyebrow reveal">Lo studio</p>
+      <h2 class="h1 reveal">Competenza, aggiornamento e <em>tempo per ascoltarti</em>.</h2>
+      <div class="about__body reveal">
+        <p>
+          Aggiornamento tecnico continuo ed esperienza professionale sono le basi del lavoro dello studio. Ma contano anche la relazione con il paziente e la chiarezza: la diagnosi viene spiegata fin dalla prima visita.
+        </p>
+        <p>
+          Il piano di cura è condiviso con te e personalizzato prima di iniziare, così sai cosa aspettarti a ogni passaggio. Questo vale per gli adulti e anche per i bambini, che accompagniamo con calma.
+        </p>
+      </div>
+      <a class="btn btn--ghost reveal" href="/gallery-studio/">
+        Guarda lo studio <Icon name="arrow" class="nudge" />
+      </a>
+    </div>
+  </Container>
+</section>
+
+<style>
+  .about {
+    padding-block: clamp(3.5rem, 8vw, 7rem);
+    background: var(--color-teal-50);
+    overflow-x: clip;
+  }
+  .about__grid {
+    display: grid;
+    gap: 2.5rem;
+    align-items: center;
+  }
+  .about__media {
+    position: relative;
+    margin: 0;
+    width: 88%;
+    aspect-ratio: 4 / 5;
+  }
+  .about__media::before {
+    content: '';
+    position: absolute;
+    inset: auto -1rem -1rem auto;
+    width: 45%;
+    height: 45%;
+    background: var(--color-teal-500);
+  }
+  .about__media :global(picture),
+  .about__media :global(img) {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .about__text {
+    display: grid;
+    gap: 1.25rem;
+    justify-items: start;
+    max-width: 36rem;
+  }
+  .about__body {
+    display: grid;
+    gap: 1rem;
+    font-size: 1.0625rem;
+  }
+  @media (min-width: 64rem) {
+    .about__grid {
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: clamp(3rem, 7vw, 7rem);
+    }
+    .about__media {
+      width: 100%;
+      max-width: 30rem;
+    }
+  }
+</style>

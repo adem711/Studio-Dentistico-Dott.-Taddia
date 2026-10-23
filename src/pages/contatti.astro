@@ -1,0 +1,34 @@
+---
+import Base from '../layouts/Base.astro';
+import ContactSection from '../components/ContactSection.astro';
+import { dentistSchema, SITE } from '../lib/schema';
+import Container from '../components/Container.astro';
+
+const contactPage = {
+  '@context': 'https://schema.org',
+  '@type': 'ContactPage',
+  name: 'Contatti e appuntamenti',
+  url: `${SITE}/contatti/`,
+  about: { '@id': `${SITE}/#dentist` },
+};
+---
+{/* DEMO: page title and intro drafted; client to approve. */}
+<Base
+  title="Contatti e appuntamenti | Studio Dentistico Dott. Taddia, Novara"
+  description="Contatta lo Studio Dentistico Dott. Taddia a Novara: Corso XXIII Marzo 189, telefono 329 414 8444, aperto dal lunedì al venerdì dalle 8 alle 20."
+  path="/contatti/"
+  jsonLd={[dentistSchema(), contactPage]}
+>
+  <section class="page-head page-head--flush">
+    <Container>
+      <div class="page-head__inner">
+        <p class="eyebrow">Contatti</p>
+        <h1 class="h1">Contatti e appuntamenti</h1>
+        <p class="lead">
+          Chiamaci per fissare una visita o per chiedere informazioni. Se preferisci, lascia i tuoi recapiti qui sotto e ti richiamiamo noi.
+        </p>
+      </div>
+    </Container>
+  </section>
+  <ContactSection showIntro={false} />
+</Base>

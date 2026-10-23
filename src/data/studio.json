@@ -1,0 +1,41 @@
+{
+  "name": "Studio Dentistico Dott. Taddia",
+  "shortName": "Studio Taddia",
+  "phone": "+39 329 414 8444",
+  "phoneHref": "tel:+393294148444",
+  "address": {
+    "street": "Corso XXIII Marzo 189",
+    "postalCode": "28100",
+    "city": "Novara",
+    "province": "NO",
+    "country": "IT"
+  },
+  "geo": {
+    "latitude": 45.43405,
+    "longitude": 8.63359
+  },
+  "hours": [
+    {
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "open": "08:00",
+      "close": "20:00"
+    }
+  ],
+  "hoursLabel": "Aperto lun–ven 8–20",
+  "facebook": "https://www.facebook.com/Dott.Taddia",
+  "mapsUrl": "https://www.google.com/maps/search/?api=1&query=Dentista%20a%20Novara%20-%20Studio%20Dentistico%20Dott.%20Taddia%2C%20Corso%20XXIII%20Marzo%20189%2C%2028100%20Novara",
+  "privacyUrl": "https://www.iubenda.com/privacy-policy/21348848",
+  "legalLine": "Delmastro Andrea – P.IVA 01531160024",
+  "yearsOfExperience": 40,
+  "privacyFullUrl": "https://www.iubenda.com/privacy-policy/21348848/legal",
+  "whatsappNumber": "393294148444",
+  "whatsappMessage": "Buongiorno, vorrei informazioni su un appuntamento. Scrivo dal sito.",
+  "googleListingName": "Dentista a Novara - Studio Dentistico Dott. Taddia",
+  "mapRequiresConsent": false
+}

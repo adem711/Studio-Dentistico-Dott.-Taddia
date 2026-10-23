@@ -1,0 +1,26 @@
+# Dependencies and build output
+node_modules/
+dist/
+.astro/
+.vercel/
+
+# OS / editor / logs
+.DS_Store
+Thumbs.db
+*.log
+
+# Local secrets (none are used today; keep it this way)
+.env
+.env.*
+!.env.example
+
+# Raw client material that is NOT needed to build or deploy the site, and that this PUBLIC repository
+# should not carry: patient photos (some show faces), screenshots of Facebook / Google pages with other
+# people's names and pictures, and the original video (the web copy is public/video/).
+# The site's own images are already in src/assets/ and public/. See README.md.
+Brand info/Work/
+Brand info/Screenshots/
+Brand info/Video/
+
+# Lighthouse: keep the readable HTML reports, not the (large, regenerable) JSON
+reports/*.json

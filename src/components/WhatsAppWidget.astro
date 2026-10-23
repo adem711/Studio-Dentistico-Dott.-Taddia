@@ -1,0 +1,324 @@
+---
+import studio from '../data/studio.json';
+import symbol from '../assets/brand/symbol-tooth-white.svg';
+import Icon from './Icon.astro';
+import OpenNow from './OpenNow.astro';
+import { whatsappHref } from '../lib/contact';
+---
+{/* DEMO: panel copy drafted in Italian; client to approve. The number must be active on WhatsApp (TODO-client.md #34). Opening the chat is a plain link: no WhatsApp script or cookie is loaded by this site. */}
+<div class="wa">
+  <button class="wa__fab" type="button" popovertarget="wa-panel" aria-label="Scrivici su WhatsApp">
+    <Icon name="whatsapp" />
+    <span class="wa__label">WhatsApp</span>
+  </button>
+
+  <!-- Greeting bubble (tablet and desktop, JS only): appears after a moment, can be dismissed, and stays away for the rest of the visit. -->
+  <div class="wa__hint" data-wa-hint>
+    <button class="wa__hint-text" type="button" popovertarget="wa-panel">Scrivici su WhatsApp</button>
+    <button class="wa__hint-close" type="button" data-wa-hint-close aria-label="Nascondi il suggerimento">
+      <Icon name="close" />
+    </button>
+  </div>
+
+  <div id="wa-panel" popover class="wa__panel" aria-label="Scrivici su WhatsApp">
+    <div class="wa__head">
+      <span class="wa__avatar" aria-hidden="true"><img src={symbol.src} alt="" width="22" height="22" /></span>
+      <div class="wa__who">
+        <strong>Studio Dentistico Taddia</strong>
+        <OpenNow />
+      </div>
+      <button class="wa__close" type="button" popovertarget="wa-panel" popovertargetaction="hide" aria-label="Chiudi">
+        <Icon name="close" />
+      </button>
+    </div>
+
+    <div class="wa__body">
+      <p class="wa__bubble">Ciao! Come possiamo aiutarti? Scrivici per avere informazioni o per fissare una visita.</p>
+      <a class="btn" href={whatsappHref()} target="_blank" rel="noopener">
+        <Icon name="whatsapp" /> Avvia la chat su WhatsApp
+        <span class="sr-only">(si apre WhatsApp in una nuova scheda)</span>
+      </a>
+      <p class="wa__note">
+        Rispondiamo negli orari di apertura. Non inviare dati sulla tua salute: ne parleremo in visita.
+        La chat si apre in WhatsApp, un servizio di terzi. Preferisci telefonare?{' '}
+        <a href={studio.phoneHref}>Chiama il {studio.phone}</a>.
+      </p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .wa {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 55;
+    view-transition-name: wa-widget;
+  }
+  .wa__fab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    min-width: 3.5rem;
+    height: 3.5rem;
+    padding: 0 1.125rem;
+    border: 2px solid var(--color-white);
+    border-radius: 999px;
+    background: var(--color-teal-600);
+    color: var(--color-white);
+    font: 500 0.9375rem/1 var(--font-sans);
+    cursor: pointer;
+    box-shadow: 0 10px 28px -8px rgb(20 40 38 / 0.55);
+    transition:
+      transform 0.25s var(--ease-out-quart),
+      background-color 0.2s,
+      box-shadow 0.25s;
+  }
+  .wa__fab:hover {
+    background: var(--color-teal-700);
+    transform: translateY(-3px);
+    box-shadow: 0 14px 30px -8px rgb(20 40 38 / 0.6);
+  }
+  .wa__fab:active {
+    transform: scale(0.96);
+  }
+  .wa__fab :global(svg) {
+    width: 1.625rem;
+    height: 1.625rem;
+    flex: none;
+  }
+
+  /* Greeting bubble. Hidden until JS is on, until the screen is tablet-sized, and for the first few seconds. */
+  .wa__hint {
+    display: none;
+  }
+  @media (min-width: 48rem) {
+    @media (scripting: enabled) {
+      .wa__hint {
+        position: absolute;
+        right: calc(100% + 0.875rem);
+        bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.125rem;
+        padding: 0.25rem 0.25rem 0.25rem 1rem;
+        border-radius: 10px;
+        background: var(--color-white);
+        color: var(--color-graphite-800);
+        box-shadow: 0 10px 28px -10px rgb(20 40 38 / 0.45);
+        white-space: nowrap;
+        animation: wa-hint-in 0.6s var(--ease-out-quart) 3s both;
+      }
+      /* Little tail pointing at the button */
+      .wa__hint::after {
+        content: '';
+        position: absolute;
+        right: -0.3125rem;
+        bottom: 0.875rem;
+        width: 0.75rem;
+        height: 0.75rem;
+        background: var(--color-white);
+        transform: rotate(45deg);
+        border-radius: 2px;
+      }
+      .wa__hint[hidden],
+      .wa:has(#wa-panel:popover-open) .wa__hint {
+        display: none;
+      }
+    }
+  }
+  .wa__hint-text {
+    padding: 0.5rem 0.25rem;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: 500 0.9375rem/1.2 var(--font-sans);
+    cursor: pointer;
+  }
+  .wa__hint-text:hover {
+    color: var(--color-teal-700);
+  }
+  .wa__hint-close {
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--color-graphite-500);
+    cursor: pointer;
+  }
+  .wa__hint-close:hover {
+    background: var(--color-graphite-100);
+    color: var(--color-graphite-800);
+  }
+  .wa__hint-close :global(svg) {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+  /* visibility is animated too, so the bubble cannot be focused before it appears */
+  @keyframes wa-hint-in {
+    from {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(10px);
+    }
+    to {
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+    }
+  }
+
+  .wa__panel {
+    /* Override the UA popover centring: anchor to the corner, above the button. */
+    inset: auto 1rem 5.5rem auto;
+    margin: 0;
+    width: min(22rem, calc(100vw - 2rem));
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    background: var(--color-white);
+    color: var(--color-graphite-600);
+    box-shadow: 0 24px 60px -18px rgb(20 40 38 / 0.5);
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+    transform-origin: bottom right;
+    transition:
+      opacity 0.2s,
+      transform 0.28s var(--ease-out-quart),
+      overlay 0.28s allow-discrete,
+      display 0.28s allow-discrete;
+  }
+  .wa__panel:popover-open {
+    opacity: 1;
+    transform: none;
+  }
+  @starting-style {
+    .wa__panel:popover-open {
+      opacity: 0;
+      transform: translateY(10px) scale(0.98);
+    }
+  }
+  .wa__panel::backdrop {
+    background: transparent;
+  }
+
+  .wa__head {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 0.875rem 0.875rem 1rem;
+    background: var(--color-teal-600);
+    color: var(--color-white);
+  }
+  .wa__avatar {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 2px solid rgb(255 255 255 / 0.7);
+    border-radius: 50%;
+  }
+  .wa__who {
+    display: grid;
+    gap: 0.15rem;
+    min-width: 0;
+    margin-right: auto;
+  }
+  .wa__who strong {
+    font-weight: 500;
+  }
+  /* The open/closed line sits on the teal header: it needs light text. */
+  .wa__who :global(.open-now) {
+    color: var(--color-teal-50);
+    font-size: 0.8125rem;
+  }
+  .wa__who :global(.open-now__dot) {
+    background: var(--color-teal-200);
+  }
+  .wa__who :global(.open-now[data-state='open'] .open-now__dot) {
+    background: #8fe3a8;
+  }
+  .wa__who :global(.open-now[data-state='open'] .open-now__dot::after) {
+    background: #8fe3a8;
+  }
+  .wa__close {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--color-white);
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  .wa__close:hover {
+    background: rgb(255 255 255 / 0.16);
+  }
+  .wa__close :global(svg) {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .wa__body {
+    display: grid;
+    gap: 1rem;
+    padding: 1.125rem 1rem 1rem;
+    background: var(--color-teal-50);
+  }
+  .wa__bubble {
+    position: relative;
+    justify-self: start;
+    max-width: 92%;
+    padding: 0.75rem 0.875rem;
+    border-radius: 0 10px 10px 10px;
+    background: var(--color-white);
+    color: var(--color-graphite-800);
+    line-height: 1.5;
+    box-shadow: 0 1px 2px rgb(20 40 38 / 0.12);
+  }
+  .wa__body .btn {
+    width: 100%;
+  }
+  .wa__body .btn :global(svg) {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  .wa__note {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--color-graphite-600);
+  }
+
+  /* On phones the sticky call bar sits at the bottom: lift the widget above it. */
+  @media (max-width: 47.99rem) {
+    .wa {
+      right: 0.75rem;
+      bottom: calc(5rem + env(safe-area-inset-bottom));
+    }
+    .wa__fab {
+      width: 3.5rem;
+      padding: 0;
+    }
+    .wa__label {
+      display: none;
+    }
+    .wa__panel {
+      inset: auto 0.75rem calc(8.75rem + env(safe-area-inset-bottom)) auto;
+      width: min(22rem, calc(100vw - 1.5rem));
+    }
+  }
+</style>
+
+<script>
+  import '../scripts/wa-hint.ts';
+</script>

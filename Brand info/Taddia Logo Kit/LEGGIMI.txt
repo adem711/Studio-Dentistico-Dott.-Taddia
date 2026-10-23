@@ -1,0 +1,21 @@
+Studio Dentistico Taddia — Logo Kit
+
+SVG/      Vettoriali, nitidi a ogni dimensione. Da usare per sito web e stampa.
+PNG/      Trasparenti ad alta risoluzione (2400px orizzontali, 1600px verticali, 1024px simboli).
+Favicon/  favicon.ico, favicon.svg, icone PNG (16–1024px) e site.webmanifest per il sito.
+
+Versioni:
+  -color    colori originali, per fondi chiari
+  -reverse  testo bianco, per fondi scuri
+  -black    monocromatico nero
+  -white    monocromatico bianco (fondi teal o fotografie scure)
+  -payoff   con la frase "Specialisti in ortodonzia per bambini e impiantologia."
+
+Colori: Teal #009A8E · Grafite #4C4C4C
+Carattere: Fira Sans (Google Fonts)
+
+Codice per il sito (cartella principale):
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">

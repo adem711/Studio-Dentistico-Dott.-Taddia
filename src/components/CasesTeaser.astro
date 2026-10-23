@@ -1,0 +1,70 @@
+---
+import BeforeAfter from './BeforeAfter.astro';
+import Icon from './Icon.astro';
+import { cases } from '../data/cases';
+import Container from './Container.astro';
+
+const featured = cases.filter((c) => ['molare', 'faccette'].includes(c.id));
+---
+{/* DEMO: heading drafted. Cases need patient consent before launch (TODO-client.md #20). */}
+<section class="teaser" aria-labelledby="teaser-title">
+  <Container>
+    <header class="teaser__head reveal">
+      <div>
+        <p class="eyebrow">Casi clinici</p>
+        <h2 id="teaser-title" class="h1">Prima e dopo, <em>caso per caso</em>.</h2>
+      </div>
+      <a class="btn btn--ghost" href="/servizi-dentali/casi-clinici/">Tutti i casi <Icon name="arrow" class="nudge" /></a>
+    </header>
+    <ul>
+      {featured.map((c) => (
+        <li class="reveal">
+          <BeforeAfter before={c.before} after={c.after} alt={c.alt} label={c.title} focus={c.focus} sizes="(min-width: 48rem) 46vw, 92vw" />
+          <p class="small">{c.title}</p>
+        </li>
+      ))}
+    </ul>
+    <p class="teaser__note small">I risultati variano da persona a persona. Le immagini hanno scopo informativo.</p>
+  </Container>
+</section>
+
+<style>
+  .teaser {
+    padding-block: clamp(3.5rem, 8vw, 7rem);
+  }
+  .teaser__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1.25rem 2rem;
+    margin-bottom: clamp(1.75rem, 4vw, 3rem);
+  }
+  .teaser__head > div {
+    display: grid;
+    gap: 0.75rem;
+  }
+  .teaser ul {
+    display: grid;
+    gap: 2rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    align-items: stretch;
+  }
+  .teaser li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    height: 100%;
+  }
+  .teaser__note {
+    margin-top: 1.75rem;
+  }
+  @media (min-width: 48rem) {
+    .teaser ul {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 2rem 3rem;
+    }
+  }
+</style>

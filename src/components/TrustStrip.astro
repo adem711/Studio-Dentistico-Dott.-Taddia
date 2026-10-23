@@ -1,0 +1,111 @@
+---
+import Icon from './Icon.astro';
+import studio from '../data/studio.json';
+import Container from './Container.astro';
+---
+{/* DEMO: trust-strip copy paraphrased from the old site. Add Google rating/review count once the clinic confirms them (TODO-client.md #8). */}
+<section class="trust" aria-label="Perché scegliere lo studio">
+  <Container class="trust__grid reveal">
+    <div class="trust__item trust__item--years">
+      <p class="trust__years"><span class="num" data-countup={studio.yearsOfExperience}>{studio.yearsOfExperience}</span></p>
+      <p><strong>anni di esperienza</strong><span>al servizio dei pazienti di Novara.</span></p>
+    </div>
+    <div class="trust__item">
+      <p><strong>Per tutta la famiglia</strong><span>Adulti e bambini, con tempi e modi adatti a ciascuno.</span></p>
+    </div>
+    <div class="trust__item">
+      <p><strong>Ogni passaggio spiegato</strong><span>Il piano di cura è condiviso e personalizzato prima di iniziare.</span></p>
+    </div>
+    <div class="trust__item">
+      <p><strong>Le voci dei pazienti</strong><a href="/recensioni/">Leggi le recensioni <Icon name="arrow" /></a></p>
+    </div>
+  </Container>
+</section>
+
+<style>
+  .trust {
+    background: var(--color-teal-50);
+  }
+  .trust__grid {
+    display: grid;
+    gap: 0;
+    grid-template-columns: 1fr;
+    padding-block: 0.5rem;
+  }
+  .trust__item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--color-teal-100);
+  }
+  .trust__item:last-child {
+    border-bottom: 0;
+  }
+  .trust__item p {
+    display: grid;
+    gap: 0.25rem;
+  }
+  .trust__item strong {
+    color: var(--color-graphite-800);
+    font-weight: 500;
+    font-size: 1.0625rem;
+  }
+  .trust__item p:not(.trust__years) span,
+  .trust__item a {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+  .trust__item a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 2.75rem;
+    font-weight: 500;
+  }
+  .trust__item a svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform 0.25s var(--ease-out-quart);
+  }
+  .trust__item a:hover svg {
+    transform: translateX(3px);
+  }
+  .trust__years {
+    min-width: 2ch;
+    color: var(--color-teal-700);
+    font-size: clamp(3.5rem, 2.5rem + 4vw, 5rem);
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+  }
+  .trust__item--years {
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 48rem) {
+    .trust__grid {
+      grid-template-columns: 1.25fr 1fr 1fr 1fr;
+      gap: 0;
+    }
+    .trust__item {
+      padding: 2rem 1.5rem;
+      border-bottom: 0;
+      border-left: 1px solid var(--color-teal-100);
+      align-items: flex-start;
+    }
+    .trust__item:first-child {
+      padding-left: 0;
+      border-left: 0;
+      align-items: center;
+    }
+  }
+  @media (min-width: 48rem) and (max-width: 63.99rem) {
+    .trust__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .trust__item:nth-child(3) {
+      border-left: 0;
+      padding-left: 0;
+    }
+  }
+</style>

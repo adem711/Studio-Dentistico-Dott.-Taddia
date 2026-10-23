@@ -1,0 +1,400 @@
+---
+import reviews from '../data/reviews.json';
+import Icon from './Icon.astro';
+import Container from './Container.astro';
+
+interface Props {
+  /** The home page shows the section heading; the reviews page already has its own h1. */
+  headingId?: string;
+  showHeading?: boolean;
+}
+const { headingId = 'reviews-title', showHeading = true } = Astro.props;
+
+// Only shown when the clinic confirms the live Google figures (see src/data/reviews.json).
+const rating = reviews.rating as number | null;
+const count = reviews.count as number | null;
+const asOf = (reviews as { ratingAsOf?: string }).ratingAsOf;
+const asOfText = asOf ? new Date(asOf).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' }) : null;
+const ratingText = rating ? rating.toLocaleString('it-IT', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) : null;
+---
+{/* The rating and count come from the official Google listing (src/data/reviews.json, dated); review dates show only when 'dateLabel' is set (TODO-client.md #14, #29). */}
+<section class="reviews on-dark" aria-labelledby={showHeading ? headingId : undefined} aria-label={showHeading ? undefined : 'Recensioni dei pazienti'}>
+  <Container>
+    <header class="reviews__head reveal">
+      {showHeading && (
+        <>
+          <p class="eyebrow">Recensioni</p>
+          <h2 id={headingId} class="h1">Cosa raccontano <em>i pazienti</em>.</h2>
+        </>
+      )}
+      <a class="badge" href={reviews.profileUrl} rel="noopener">
+        <span class="badge__g" aria-hidden="true">G</span>
+        <span class="badge__text">
+          {ratingText ? (
+            <>
+              <strong>{ratingText}</strong>
+              <span class="badge__stars" aria-hidden="true">
+                {Array.from({ length: 5 }).map(() => <Icon name="star" />)}
+              </span>
+              <span>su Google{count ? ` · ${count} recensioni` : ''}</span>
+            </>
+          ) : (
+            <>
+              <strong>Recensioni reali dei pazienti</strong>
+              <span>su Google</span>
+            </>
+          )}
+        </span>
+        <Icon name="arrow" class="badge__go" />
+        <span class="sr-only"> (apre Google Maps)</span>
+      </a>
+      <p class="reviews__note">
+        {ratingText && asOfText ? `Valutazione e numero di recensioni di Google al ${asOfText}. ` : ''}Recensioni riportate senza modifiche, come sono state pubblicate.
+      </p>
+    </header>
+
+    <div class="carousel" data-carousel data-interval="7000">
+      <ul class="carousel__track" tabindex="0" aria-label="Recensioni dei pazienti">
+        {reviews.items.map((r) => (
+          <li class="card">
+            <figure>
+              <p class="stars" role="img" aria-label={`${r.rating} stelle su 5`}>
+                {Array.from({ length: r.rating }).map(() => <Icon name="star" />)}
+              </p>
+              <blockquote><p>{r.text}</p></blockquote>
+              <figcaption>
+                <span class="avatar" aria-hidden="true">{r.name.trim().charAt(0).toUpperCase()}</span>
+                <span class="who">
+                  <strong>{r.name}</strong>
+                  <span>{(r as { dateLabel?: string }).dateLabel ?? 'Recensione su Google'}</span>
+                </span>
+              </figcaption>
+            </figure>
+          </li>
+        ))}
+      </ul>
+
+      <div class="carousel__bar" hidden>
+        <div class="carousel__controls">
+          <button type="button" data-carousel-prev aria-label="Recensione precedente"><Icon name="arrow" class="flip" /></button>
+          <button type="button" data-carousel-toggle aria-pressed="false" aria-label="Metti in pausa lo scorrimento automatico">
+            <span class="pause" aria-hidden="true"></span>
+            <span class="play" aria-hidden="true"></span>
+          </button>
+          <button type="button" data-carousel-next aria-label="Recensione successiva"><Icon name="arrow" /></button>
+        </div>
+        <div class="carousel__dots" role="group" aria-label="Scegli una recensione">
+          {reviews.items.map((r, i) => (
+            <button type="button" data-carousel-dot={i} aria-label={`Recensione ${i + 1} di ${reviews.items.length}: ${r.name}`}></button>
+          ))}
+        </div>
+      </div>
+    </div>
+  </Container>
+</section>
+
+<style>
+  .reviews {
+    background: var(--color-ink);
+    color: var(--color-graphite-300);
+    padding-block: clamp(3.5rem, 8vw, 7rem);
+  }
+  .reviews__head {
+    display: grid;
+    justify-items: center;
+    gap: 1rem;
+    max-width: 44rem;
+    margin: 0 auto clamp(2rem, 5vw, 3.5rem);
+    text-align: center;
+  }
+  .reviews__head h2 {
+    color: var(--color-white);
+  }
+  .reviews__note {
+    font-size: 0.9375rem;
+    color: var(--color-graphite-300);
+  }
+
+  /* Trust badge */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.5rem 1.125rem 0.5rem 0.5rem;
+    border: 1px solid rgb(255 255 255 / 0.18);
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.05);
+    color: var(--color-white);
+    text-decoration: none;
+    transition:
+      background-color 0.25s,
+      border-color 0.25s,
+      transform 0.25s var(--ease-out-quart);
+  }
+  .badge:hover {
+    background: rgb(255 255 255 / 0.1);
+    border-color: var(--color-teal-400);
+    transform: translateY(-2px);
+    color: var(--color-white);
+  }
+  .badge__g {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: var(--color-white);
+    color: var(--color-teal-700);
+    font-size: 1.375rem;
+    font-weight: 600;
+    line-height: 1;
+  }
+  .badge__text {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.625rem;
+    font-size: 0.9375rem;
+    text-align: left;
+  }
+  .badge__text strong {
+    font-weight: 500;
+  }
+  .badge__stars {
+    display: inline-flex;
+    gap: 0.1rem;
+    color: var(--color-sun-500);
+  }
+  .badge__stars :global(svg) {
+    width: 0.9rem;
+    height: 0.9rem;
+    fill: currentColor;
+    stroke: none;
+  }
+  .badge :global(.badge__go) {
+    width: 1rem;
+    height: 1rem;
+    color: var(--color-teal-300);
+    transition: transform 0.25s var(--ease-out-quart);
+  }
+  .badge:hover :global(.badge__go) {
+    transform: translateX(3px);
+  }
+
+  /* Carousel */
+  .carousel {
+    position: relative;
+  }
+  .carousel__track {
+    display: flex;
+    gap: 1.25rem;
+    margin: 0;
+    padding: 0.5rem 0.25rem 1.25rem;
+    list-style: none;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .carousel__track::-webkit-scrollbar {
+    display: none;
+  }
+  .carousel__track:focus-visible {
+    outline-offset: 4px;
+  }
+  .card {
+    flex: 0 0 min(86%, 24rem);
+    scroll-snap-align: start;
+    display: flex;
+  }
+  .card figure {
+    position: relative;
+    display: grid;
+    align-content: space-between;
+    gap: 1.5rem;
+    width: 100%;
+    margin: 0;
+    padding: 2rem 1.75rem 1.5rem;
+    border: 1px solid rgb(255 255 255 / 0.12);
+    border-top: 3px solid var(--color-teal-500);
+    background: rgb(255 255 255 / 0.045);
+    color: var(--color-graphite-200);
+    transition:
+      transform 0.3s var(--ease-out-quart),
+      border-color 0.3s,
+      background-color 0.3s,
+      box-shadow 0.3s;
+  }
+  .card figure:hover {
+    transform: translateY(-5px);
+    border-color: rgb(255 255 255 / 0.28);
+    border-top-color: var(--color-teal-400);
+    background: rgb(255 255 255 / 0.075);
+    box-shadow: 0 18px 40px -22px rgb(0 0 0 / 0.7);
+  }
+  /* Decorative opening quotation mark: a fixed-size SVG shape, not a text glyph, so a web-font swap can never move it (CLS 0). */
+  .card figure::before {
+    content: '';
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    width: 2.5rem;
+    height: 1.875rem;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 36'%3E%3Cpath fill='%232FAEA2' d='M0 36V21C0 9 6 2 18 0l2 5C13 7 10 11 10 17h10v19H0zm26 0V21C26 9 32 2 44 0l2 5c-7 2-10 6-10 12h10v19H26z'/%3E%3C/svg%3E") center / contain no-repeat;
+    opacity: 0.4;
+    pointer-events: none;
+  }
+  .stars {
+    display: flex;
+    gap: 0.15rem;
+    color: var(--color-sun-500);
+  }
+  .stars :global(svg) {
+    width: 1.0625rem;
+    height: 1.0625rem;
+    fill: currentColor;
+    stroke: none;
+  }
+  blockquote {
+    margin: 0;
+    font-size: 1.125rem;
+    line-height: 1.6;
+    color: var(--color-white);
+  }
+  figcaption {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-top: 1.125rem;
+    border-top: 1px solid rgb(255 255 255 / 0.12);
+  }
+  .avatar {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background: var(--color-teal-600);
+    color: var(--color-white);
+    font-weight: 500;
+    box-shadow: 0 0 0 3px rgb(47 174 162 / 0.25);
+  }
+  .who {
+    display: grid;
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+  .who strong {
+    color: var(--color-white);
+    font-weight: 500;
+  }
+  .who span {
+    color: var(--color-graphite-300);
+  }
+
+  /* Controls + progress dots */
+  .carousel__bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem 1.5rem;
+    margin-top: 0.75rem;
+  }
+  .carousel__bar:not([hidden]) {
+    display: flex;
+  }
+  .carousel__controls {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .carousel__controls button {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border: 1px solid var(--color-teal-600);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--color-white);
+    cursor: pointer;
+    transition:
+      background-color 0.2s,
+      transform 0.2s var(--ease-out-quart);
+  }
+  .carousel__controls button:hover {
+    background: var(--color-teal-800);
+  }
+  .carousel__controls button:active {
+    transform: scale(0.94);
+  }
+  .carousel__controls svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  .carousel__dots {
+    display: flex;
+    gap: 0.125rem;
+  }
+  /* 24px hit area around a small dot (WCAG 2.2 target size) */
+  .carousel__dots button {
+    position: relative;
+    width: 1.5rem;
+    height: 1.5rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+  .carousel__dots button::after {
+    content: '';
+    position: absolute;
+    inset: 50% auto auto 50%;
+    width: 0.5rem;
+    height: 0.5rem;
+    margin: -0.25rem 0 0 -0.25rem;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.35);
+    transition:
+      width 0.3s var(--ease-out-quart),
+      margin 0.3s var(--ease-out-quart),
+      background-color 0.3s;
+  }
+  .carousel__dots button:hover::after {
+    background: rgb(255 255 255 / 0.7);
+  }
+  .carousel__dots button[aria-current='true']::after {
+    width: 1.25rem;
+    margin-left: -0.625rem;
+    background: var(--color-teal-400);
+  }
+  .pause {
+    width: 0.875rem;
+    height: 1rem;
+    border-inline: 4px solid currentColor;
+  }
+  .play {
+    display: none;
+    width: 0;
+    height: 0;
+    margin-left: 0.2rem;
+    border-block: 0.5rem solid transparent;
+    border-left: 0.85rem solid currentColor;
+  }
+  button[aria-pressed='true'] .pause {
+    display: none;
+  }
+  button[aria-pressed='true'] .play {
+    display: block;
+  }
+  @media (min-width: 64rem) {
+    .card {
+      flex-basis: calc((100% - 2.5rem) / 3);
+    }
+  }
+</style>
+
+<script>
+  import '../scripts/carousel.ts';
+</script>

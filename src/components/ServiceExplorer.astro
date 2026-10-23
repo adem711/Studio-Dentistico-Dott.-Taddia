@@ -1,0 +1,194 @@
+---
+import { Picture } from 'astro:assets';
+import Icon from './Icon.astro';
+import { getServices, servicePath } from '../lib/services';
+import Container from './Container.astro';
+
+const services = await getServices();
+---
+{/* DEMO: section heading drafted; service summaries come from src/content/services/*.md */}
+<section class="explorer" aria-labelledby="services-title">
+  <Container>
+    <header class="explorer__head reveal">
+      <p class="eyebrow">Servizi</p>
+      <h2 id="services-title" class="h1">
+        Dalla prima visita alle cure, <em>nello stesso studio</em>.
+      </h2>
+    </header>
+
+    <div class="explorer__grid">
+      <ul class="explorer__list">
+        {services.map((s) => (
+          <li class="item reveal">
+            <a href={servicePath(s.id)}>
+              <span class={`thumb vt-${s.data.order}`}>
+                <Picture
+                  src={s.data.image}
+                  formats={['avif', 'webp']}
+                  widths={[120, 240]}
+                  sizes="96px"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+              </span>
+              <span class="text">
+                <span class="title">{s.data.title}</span>
+                <span class="summary">{s.data.summary}</span>
+              </span>
+              <Icon name="arrow" class="go" />
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <div class="explorer__preview" aria-hidden="true">
+        {services.map((s) => (
+          <div class={`panel vt-${s.data.order}`}>
+            <Picture
+              src={s.data.image}
+              formats={['avif', 'webp']}
+              widths={[480, 720]}
+              sizes="(min-width: 1024px) 34vw, 0px"
+              alt=""
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  </Container>
+</section>
+
+<style>
+  .explorer {
+    padding-block: clamp(3.5rem, 8vw, 7rem);
+  }
+  .explorer__head {
+    display: grid;
+    gap: 0.75rem;
+    max-width: 40rem;
+    margin-bottom: clamp(2rem, 5vw, 3.5rem);
+  }
+  .explorer__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--color-graphite-100);
+  }
+  .item {
+    border-bottom: 1px solid var(--color-graphite-100);
+  }
+  .item a {
+    display: grid;
+    grid-template-columns: 4.5rem minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.125rem 0;
+    color: inherit;
+    text-decoration: none;
+  }
+  .thumb {
+    display: block;
+    width: 4.5rem;
+    height: 4.5rem;
+    overflow: hidden;
+    background: var(--color-teal-50);
+  }
+  .thumb :global(img),
+  .panel :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .text {
+    display: grid;
+    gap: 0.25rem;
+  }
+  .title {
+    color: var(--color-graphite-800);
+    font-size: 1.1875rem;
+    font-weight: 500;
+    line-height: 1.25;
+  }
+  .summary {
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: var(--color-graphite-600);
+  }
+  .go {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: var(--color-teal-600);
+    transition: transform 0.3s var(--ease-out-quart);
+  }
+  .item a:hover .go,
+  .item a:focus-visible .go {
+    transform: translateX(6px);
+  }
+  .item a:hover .title {
+    color: var(--color-teal-700);
+  }
+
+  .explorer__preview {
+    display: none;
+  }
+
+  /* Desktop: hovering or focusing a service swaps the image. Opacity only, in a fixed-size frame. */
+  @media (min-width: 64rem) {
+    .explorer__grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+      gap: clamp(2rem, 6vw, 6rem);
+      align-items: start;
+    }
+    .item a {
+      grid-template-columns: minmax(0, 1fr) auto;
+      padding: 1.5rem 0;
+    }
+    .thumb {
+      display: none;
+    }
+    .title {
+      font-size: 1.5rem;
+      font-weight: 400;
+    }
+    .explorer__preview {
+      display: block;
+      position: sticky;
+      top: 6.5rem;
+      aspect-ratio: 1 / 1;
+      /* Room for the corner block below, so it stays inside the container. */
+      margin: 0 1.25rem 1.25rem 0;
+      background: var(--color-teal-50);
+    }
+    .panel {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.45s var(--ease-out-quart);
+    }
+    .explorer__preview::after {
+      content: '';
+      position: absolute;
+      inset: auto -1.25rem -1.25rem auto;
+      width: 38%;
+      height: 38%;
+      z-index: -1;
+      background: var(--color-teal-500);
+    }
+    /* First service shows until another is hovered or focused. */
+    .explorer:not(:has(.item:is(:hover, :focus-within))) .panel:nth-child(1) {
+      opacity: 1;
+    }
+    .explorer:has(.item:nth-child(1):is(:hover, :focus-within)) .panel:nth-child(1),
+    .explorer:has(.item:nth-child(2):is(:hover, :focus-within)) .panel:nth-child(2),
+    .explorer:has(.item:nth-child(3):is(:hover, :focus-within)) .panel:nth-child(3),
+    .explorer:has(.item:nth-child(4):is(:hover, :focus-within)) .panel:nth-child(4),
+    .explorer:has(.item:nth-child(5):is(:hover, :focus-within)) .panel:nth-child(5),
+    .explorer:has(.item:nth-child(6):is(:hover, :focus-within)) .panel:nth-child(6) {
+      opacity: 1;
+    }
+  }
+</style>

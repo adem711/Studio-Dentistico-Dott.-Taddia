@@ -1,0 +1,91 @@
+---
+import Base from '../../layouts/Base.astro';
+import BeforeAfter from '../../components/BeforeAfter.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { cases } from '../../data/cases';
+import { SITE } from '../../lib/schema';
+import Container from '../../components/Container.astro';
+
+const breadcrumb = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE}/` },
+    { '@type': 'ListItem', position: 2, name: 'Servizi dentali', item: `${SITE}/servizi-dentali/` },
+    { '@type': 'ListItem', position: 3, name: 'Casi clinici', item: `${SITE}/servizi-dentali/casi-clinici/` },
+  ],
+};
+---
+{/* DEMO: intro and disclaimer drafted; case titles are placeholders. Publish only after patient consent is confirmed (TODO-client.md #20). */}
+<Base
+  title="Casi clinici prima e dopo | Studio Dentistico Dott. Taddia, Novara"
+  description="Alcuni casi trattati nello studio dentistico di Novara, con il confronto prima e dopo. I risultati variano da persona a persona."
+  path="/servizi-dentali/casi-clinici/"
+  jsonLd={[breadcrumb]}
+>
+  <section class="page-head">
+    <Container>
+      <div class="page-head__inner">
+      <p class="eyebrow">Casi clinici</p>
+      <h1 class="h1">Prima e dopo, <em>caso per caso</em>.</h1>
+      <p class="lead">
+        Alcuni lavori eseguiti in studio. Trascina il cursore su ogni immagine, oppure usa le frecce della tastiera, per confrontare la situazione di partenza con il risultato.
+      </p>
+      <p class="small">
+        Ogni caso è diverso: i risultati variano da persona a persona e dipendono dalla situazione clinica di partenza. Le immagini hanno scopo informativo.
+      </p>
+      </div>
+    </Container>
+  </section>
+
+  <section class="cases" aria-label="Elenco dei casi">
+    <Container>
+      <ul>
+        {cases.map((c, i) => (
+          <li class="case reveal">
+            <BeforeAfter
+              before={c.before}
+              after={c.after}
+              alt={c.alt}
+              label={c.title}
+              focus={c.focus}
+              loading={i < 2 ? 'eager' : 'lazy'}
+            />
+            <h2 class="h4">{c.title}</h2>
+          </li>
+        ))}
+      </ul>
+    </Container>
+  </section>
+
+  <CtaBand
+    title="Vuoi capire cosa si può fare nel tuo caso?"
+    text="Ogni piano di cura parte da una visita: ti spieghiamo la diagnosi e le possibilità, poi decidiamo insieme."
+  />
+</Base>
+
+<style>
+  .cases {
+    padding-block: 1rem clamp(3rem, 7vw, 6rem);
+  }
+  .cases ul {
+    display: grid;
+    gap: clamp(2rem, 4vw, 3.5rem) clamp(1.5rem, 3vw, 3rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  /* Every card is the same height: the slider frame is a fixed 16:10 and the card fills its grid cell. */
+  .case {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    height: 100%;
+  }
+  @media (min-width: 48rem) {
+    .cases ul {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: stretch;
+    }
+  }
+</style>

@@ -1,0 +1,30 @@
+---
+import Base from '../layouts/Base.astro';
+import Reviews from '../components/Reviews.astro';
+import CtaBand from '../components/CtaBand.astro';
+import reviews from '../data/reviews.json';
+import Container from '../components/Container.astro';
+---
+{/* DEMO: intro drafted. Reviews are real and verbatim, but only 4 are shown and dates are relative (TODO-client.md #14). */}
+<Base
+  title="Recensioni dei pazienti | Studio Dentistico Dott. Taddia, Novara"
+  description="Le recensioni dei pazienti dello Studio Dentistico Dott. Taddia di Novara, pubblicate su Google e riportate senza modifiche."
+  path="/recensioni/"
+>
+  <section class="page-head">
+    <Container>
+      <div class="page-head__inner">
+        <p class="eyebrow">Recensioni</p>
+        <h1 class="h1">Cosa raccontano <em>i pazienti</em>.</h1>
+        <p class="lead">
+          Alcune recensioni pubblicate su Google, riportate senza modifiche. Per leggerle tutte e vedere la valutazione aggiornata,{' '}
+          <a href={reviews.profileUrl} rel="noopener">apri la scheda dello studio su Google</a>.
+        </p>
+      </div>
+    </Container>
+  </section>
+
+  <Reviews showHeading={false} />
+
+  <CtaBand />
+</Base>
